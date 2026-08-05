@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff — Qaseh Katering Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body data-page="staff">
+<div class="app">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <header id="topbar"></header>
+    <div class="content">
+
+      <div class="page-head">
+        <div><div class="ph-t" data-en="Staff" data-bm="Staf">Staff</div><div class="ph-s" data-en="Team directory & scheduling" data-bm="Direktori pasukan & penjadualan">Team directory & scheduling</div></div>
+        <div class="grow"></div>
+        <button class="btn btn-primary" id="add-staff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-en="Add staff" data-bm="Tambah staf">Add staff</span></button>
+      </div>
+
+      <section class="stat-strip" id="staff-stats"></section>
+
+      <section class="card pad" style="padding:14px 16px">
+        <div class="toolbar">
+          <label class="field search-field">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="q" data-en="Search name, role…" data-bm="Cari nama, peranan…" data-i18n-ph placeholder="Search name, role…">
+          </label>
+          <div class="select"><select id="f-role">
+            <option value="" data-en="All roles" data-bm="Semua peranan">All roles</option>
+            <option value="Chef">Chef</option>
+            <option value="Kitchen">Kitchen</option>
+            <option value="Driver">Driver</option>
+            <option value="Waiter">Waiter</option>
+            <option value="Supervisor">Supervisor</option>
+          </select></div>
+          <div class="select"><select id="f-avail">
+            <option value="" data-en="All availability" data-bm="Semua ketersediaan">All availability</option>
+            <option value="free" data-en="Available" data-bm="Ada">Available</option>
+            <option value="busy" data-en="Assigned" data-bm="Bertugas">Assigned</option>
+            <option value="off" data-en="On leave" data-bm="Cuti">On leave</option>
+          </select></div>
+          <span class="grow"></span>
+          <span class="result-count" id="rc"></span>
+        </div>
+      </section>
+
+      <section id="staff-grid" class="grid3"></section>
+
+    </div>
+  </main>
+</div>
+<div class="tt" id="tooltip"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/staff.js"></script>
+</body>
+</html>

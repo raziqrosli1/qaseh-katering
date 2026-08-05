@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customers — Qaseh Katering Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body data-page="customers">
+<div class="app">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <header id="topbar"></header>
+    <div class="content">
+
+      <div class="page-head">
+        <div><div class="ph-t" data-en="Customers" data-bm="Pelanggan">Customers</div><div class="ph-s" data-en="Directory & client relationships" data-bm="Direktori & hubungan pelanggan">Directory & client relationships</div></div>
+        <div class="grow"></div>
+        <button class="btn btn-primary" id="add-cust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-en="Add customer" data-bm="Tambah pelanggan">Add customer</span></button>
+      </div>
+
+      <section class="stat-strip" id="cust-stats"></section>
+
+      <section class="card pad" style="padding:14px 16px">
+        <div class="toolbar">
+          <label class="field search-field">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="q" data-en="Search name, company, city…" data-bm="Cari nama, syarikat, bandar…" data-i18n-ph placeholder="Search name, company, city…">
+          </label>
+          <div class="select"><select id="f-sort">
+            <option value="spent" data-en="Sort: Top spending" data-bm="Susun: Belanja tertinggi">Sort: Top spending</option>
+            <option value="orders" data-en="Sort: Most orders" data-bm="Susun: Tempahan terbanyak">Sort: Most orders</option>
+            <option value="name" data-en="Sort: Name A–Z" data-bm="Susun: Nama A–Z">Sort: Name A–Z</option>
+          </select></div>
+          <span class="grow"></span>
+          <span class="result-count" id="rc"></span>
+        </div>
+      </section>
+
+      <section class="card tbl-card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th data-en="Customer" data-bm="Pelanggan">Customer</th><th data-en="City" data-bm="Bandar">City</th><th class="r" data-en="Orders" data-bm="Tempahan">Orders</th>
+              <th class="r" data-en="Total spent" data-bm="Jumlah belanja">Total spent</th><th data-en="Favourite package" data-bm="Pakej kegemaran">Favourite package</th>
+            </tr></thead>
+            <tbody id="cust-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+<div class="tt" id="tooltip"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/customers.js"></script>
+</body>
+</html>

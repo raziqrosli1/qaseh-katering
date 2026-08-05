@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventori — Qaseh Katering Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body data-page="inventory">
+<div class="app">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <header id="topbar"></header>
+    <div class="content">
+
+      <section class="stat-strip" id="inv-stats" style="margin-top:4px"></section>
+
+      <div class="inv-bar">
+        <div class="inv-tabs">
+          <button class="inv-tab active" data-view="stock">Senarai stok</button>
+          <button class="inv-tab" data-view="bom">Resepi &amp; keperluan</button>
+        </div>
+        <span class="grow"></span>
+        <button class="btn" id="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Eksport</button>
+        <button class="btn btn-primary" id="add-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Tambah item</button>
+      </div>
+
+      <!-- ===== VIEW: STOCK ===== -->
+      <div id="view-stock">
+        <section class="card pad" style="padding:14px 16px">
+          <div class="toolbar">
+            <label class="field search-field">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input id="q" placeholder="Cari item, kod, pembekal…">
+            </label>
+            <div class="select"><select id="f-cat"><option value="">Semua kategori</option></select></div>
+            <div class="select"><select id="f-status">
+              <option value="">Semua status</option>
+              <option value="ok">Ada stok</option>
+              <option value="low">Stok rendah</option>
+              <option value="out">Habis stok</option>
+            </select></div>
+            <span class="grow"></span>
+            <span class="result-count" id="rc"></span>
+          </div>
+        </section>
+
+        <section class="card tbl-card">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th>Item</th><th class="r">Stok ada</th><th class="r">Pesan semula</th>
+                <th class="r">Kos seunit</th><th class="r">Nilai</th><th>Status</th>
+              </tr></thead>
+              <tbody id="inv-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ===== VIEW: BOM / RECIPE ===== -->
+      <div id="view-bom" hidden>
+        <section class="card pad" style="margin-bottom:16px">
+          <div class="step-badge">1</div>
+          <div class="card-title" style="margin-top:2px" data-en="How much do I need to buy?" data-bm="Berapa bahan perlu dibeli?">How much do I need to buy?</div>
+          <div class="card-sub" data-en="Choose a package and number of guests. The system shows how much of each ingredient you need, and whether stock is enough (green) or short (red)." data-bm="Pilih pakej dan bilangan tetamu. Sistem tunjuk berapa banyak setiap bahan diperlukan, dan sama ada stok cukup (hijau) atau kurang (merah).">Choose a package and number of guests.</div>
+          <div class="toolbar" style="margin:16px 0 4px">
+            <div class="select"><select id="bom-pkg"></select></div>
+            <label class="field" style="max-width:180px"><span class="muted" style="font-size:11px">Tetamu (pax)</span><input type="number" id="bom-pax" value="200" min="10" max="2000" step="10" style="text-align:right"></label>
+            <span class="grow"></span>
+            <span class="result-count" id="bom-note"></span>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Bahan</th><th class="r">Perlu</th><th class="r">Ada stok</th><th class="r">Kurang</th><th>Status</th></tr></thead>
+              <tbody id="bom-result"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card pad">
+          <div class="flex between center" style="gap:12px;flex-wrap:wrap">
+            <div>
+              <div class="step-badge">2</div>
+              <div class="card-title" style="margin-top:2px" data-en="Recipe per package (per 100 guests)" data-bm="Resepi setiap pakej (untuk 100 tetamu)">Recipe per package (per 100 guests)</div>
+              <div class="card-sub" data-en="Set how much of each ingredient is used for 100 guests. This is what Step 1 uses to calculate. Cost per guest & margin update automatically." data-bm="Tetapkan berapa banyak setiap bahan untuk 100 tetamu. Inilah yang Langkah 1 guna untuk mengira. Kos/tetamu & margin dikira automatik.">Set how much of each ingredient is used for 100 guests.</div>
+            </div>
+            <div class="flex gap8">
+              <button class="btn btn-sm" id="recipe-add-ing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Tambah bahan</button>
+              <button class="btn btn-sm btn-primary" id="recipe-save">Simpan resepi</button>
+            </div>
+          </div>
+          <div class="tbl-wrap" style="margin-top:14px">
+            <table>
+              <thead><tr><th>Bahan</th><th class="r">Qty / 100 pax</th><th class="r">Kos / pax</th><th class="r"></th></tr></thead>
+              <tbody id="recipe-body"></tbody>
+            </table>
+          </div>
+          <div class="stat-strip" id="recipe-sum" style="margin-top:16px"></div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+</div>
+<div class="tt" id="tooltip"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/inventory.js"></script>
+</body>
+</html>

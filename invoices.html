@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoices — Qaseh Katering Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body data-page="invoices">
+<div class="app">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <header id="topbar"></header>
+    <div class="content">
+
+      <div class="page-head">
+        <div><div class="ph-t" data-en="Invoices" data-bm="Invois">Invoices</div><div class="ph-s" data-en="Billing & payment tracking" data-bm="Bil & jejak pembayaran">Billing & payment tracking</div></div>
+        <div class="grow"></div>
+        <button class="btn" id="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span data-en="Export" data-bm="Eksport">Export</span></button>
+        <button class="btn btn-primary" id="new-inv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-en="New invoice" data-bm="Invois baharu">New invoice</span></button>
+      </div>
+
+      <section class="stat-strip" id="inv-stats"></section>
+
+      <section class="card pad" style="padding:14px 16px">
+        <div class="toolbar">
+          <label class="field search-field">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="q" data-en="Search invoice, customer…" data-bm="Cari invois, pelanggan…" data-i18n-ph placeholder="Search invoice, customer…">
+          </label>
+          <div class="select"><select id="f-status">
+            <option value="" data-en="All statuses" data-bm="Semua status">All statuses</option>
+            <option value="paid" data-en="Paid" data-bm="Dibayar">Paid</option>
+            <option value="partial" data-en="Deposit paid" data-bm="Deposit dibayar">Deposit paid</option>
+            <option value="pending" data-en="Pending" data-bm="Menunggu">Pending</option>
+            <option value="overdue" data-en="Overdue" data-bm="Tertunggak">Overdue</option>
+            <option value="refunded" data-en="Refunded" data-bm="Dipulangkan">Refunded</option>
+          </select></div>
+          <span class="grow"></span>
+          <span class="result-count" id="rc"></span>
+        </div>
+      </section>
+
+      <section class="card tbl-card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th data-en="Invoice" data-bm="Invois">Invoice</th><th data-en="Customer" data-bm="Pelanggan">Customer</th><th data-en="Issued" data-bm="Dikeluarkan">Issued</th><th data-en="Due" data-bm="Tarikh akhir">Due</th>
+              <th class="r" data-en="Total" data-bm="Jumlah">Total</th><th class="r" data-en="Balance" data-bm="Baki">Balance</th><th data-en="Status" data-bm="Status">Status</th><th></th>
+            </tr></thead>
+            <tbody id="inv-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+<div class="tt" id="tooltip"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/invoices.js"></script>
+</body>
+</html>

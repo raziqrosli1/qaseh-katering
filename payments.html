@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payments — Qaseh Katering Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body data-page="payments">
+<div class="app">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <header id="topbar"></header>
+    <div class="content">
+
+      <div class="page-head">
+        <div><div class="ph-t" data-en="Payments" data-bm="Bayaran">Payments</div><div class="ph-s" data-en="Transaction history & receipts" data-bm="Sejarah transaksi & resit">Transaction history & receipts</div></div>
+        <div class="grow"></div>
+        <button class="btn" id="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span data-en="Export" data-bm="Eksport">Export</span></button>
+        <button class="btn btn-primary" id="record"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-en="Record payment" data-bm="Rekod bayaran">Record payment</span></button>
+      </div>
+
+      <section class="stat-strip" id="pay-stats"></section>
+
+      <section class="card pad" style="padding:14px 16px">
+        <div class="toolbar">
+          <label class="field search-field">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="q" data-en="Search payment, customer, invoice…" data-bm="Cari bayaran, pelanggan, invois…" data-i18n-ph placeholder="Search payment, customer, invoice…">
+          </label>
+          <div class="select"><select id="f-kind">
+            <option value="" data-en="All types" data-bm="Semua jenis">All types</option>
+            <option value="deposit" data-en="Deposit" data-bm="Deposit">Deposit</option>
+            <option value="full" data-en="Full payment" data-bm="Bayaran penuh">Full payment</option>
+            <option value="balance" data-en="Balance" data-bm="Baki">Balance</option>
+            <option value="refund" data-en="Refund" data-bm="Pemulangan">Refund</option>
+          </select></div>
+          <div class="select"><select id="f-method">
+            <option value="" data-en="All methods" data-bm="Semua kaedah">All methods</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="FPX">FPX</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Cash">Cash</option>
+          </select></div>
+          <span class="grow"></span>
+          <span class="result-count" id="rc"></span>
+        </div>
+      </section>
+
+      <section class="card tbl-card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th data-en="Transaction" data-bm="Transaksi">Transaction</th><th data-en="Customer" data-bm="Pelanggan">Customer</th><th data-en="Invoice" data-bm="Invois">Invoice</th><th data-en="Method" data-bm="Kaedah">Method</th>
+              <th data-en="Type" data-bm="Jenis">Type</th><th data-en="Date" data-bm="Tarikh">Date</th><th class="r" data-en="Amount" data-bm="Jumlah">Amount</th><th></th>
+            </tr></thead>
+            <tbody id="pay-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+<div class="tt" id="tooltip"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/payments.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar — Qaseh Katering Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body data-page="calendar">
+<div class="app">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <header id="topbar"></header>
+    <div class="content">
+
+      <div class="page-head">
+        <div><div class="ph-t" data-en="Calendar" data-bm="Kalendar">Calendar</div><div class="ph-s" data-en="Events, bookings & daily schedule" data-bm="Majlis, tempahan & jadual harian">Events, bookings & daily schedule</div></div>
+        <div class="grow"></div>
+        <button class="btn btn-sm" id="cal-today" data-en="Today" data-bm="Hari ini">Today</button>
+        <div class="tabs" id="view-tabs">
+          <button class="on" data-v="month" data-en="Month" data-bm="Bulan">Month</button>
+          <button data-v="week" data-en="Week" data-bm="Minggu">Week</button>
+          <button data-v="day" data-en="Day" data-bm="Hari">Day</button>
+        </div>
+      </div>
+
+      <section class="stat-strip" id="cal-stats"></section>
+
+      <section class="mid-grid">
+        <div class="card cal">
+          <div class="cal-top">
+            <div class="mo" id="cal-title">August <span class="yr">2026</span></div>
+            <div class="cal-nav">
+              <button aria-label="Previous" id="cal-prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <button aria-label="Next" id="cal-next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+          </div>
+          <div id="cal-view"></div>
+          <div class="legend" style="margin-top:18px;gap:16px">
+            <div class="li"><span class="badge-s b-confirmed"><i></i><span data-en="Confirmed" data-bm="Disahkan">Confirmed</span></span></div>
+            <div class="li"><span class="badge-s b-preparing"><i></i><span data-en="Preparing" data-bm="Sedang sedia">Preparing</span></span></div>
+            <div class="li"><span class="badge-s b-pending"><i></i><span data-en="Pending" data-bm="Menunggu">Pending</span></span></div>
+            <div class="li"><span class="badge-s b-completed"><i></i><span data-en="Completed" data-bm="Selesai">Completed</span></span></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card sched">
+            <div class="sched-h"><div class="t" data-en="Today's schedule" data-bm="Jadual hari ini">Today's schedule</div><div class="cnt" data-en="Mon · 3 Aug" data-bm="Isn · 3 Ogos">Mon · 3 Aug</div></div>
+            <div class="timeline" id="timeline"></div>
+          </div>
+          <div class="card pad">
+            <div class="card-title" data-en="Upcoming events" data-bm="Majlis akan datang">Upcoming events</div>
+            <div class="card-sub" data-en="Next confirmed bookings" data-bm="Tempahan disahkan seterusnya">Next confirmed bookings</div>
+            <div id="upcoming"></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+<div class="tt" id="tooltip"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/calendar.js"></script>
+</body>
+</html>

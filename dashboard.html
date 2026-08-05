@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Qaseh Katering Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body data-page="dashboard">
+<div class="app">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <header id="topbar"></header>
+    <div class="content">
+
+      <!-- KPI CARDS -->
+      <section class="kpi-grid" id="kpi-grid"></section>
+
+      <!-- NEEDS ATTENTION -->
+      <div class="sec-head"><h2 data-en="Needs attention" data-bm="Perlu perhatian">Needs attention</h2><span class="rule"></span></div>
+      <section class="duo-grid">
+        <div class="card pad">
+          <div class="card-title" data-en="Action center" data-bm="Pusat tindakan">Action center</div>
+          <div class="card-sub" id="ac-sub" data-en="Items that need your action" data-bm="Perkara yang perlukan tindakan anda">Items that need your action</div>
+          <div id="action-center"></div>
+        </div>
+        <div class="card pad">
+          <div class="card-title" data-en="Smart insights" data-bm="Cerapan pintar">Smart insights</div>
+          <div class="card-sub" data-en="Auto-generated from your business data" data-bm="Dijana automatik dari data perniagaan anda">Auto-generated from your business data</div>
+          <div id="insights"></div>
+        </div>
+      </section>
+
+      <!-- CHARTS -->
+      <div class="sec-head"><h2 data-en="Business analytics" data-bm="Analitik perniagaan">Business analytics</h2><span class="rule"></span>
+        <a class="act" href="reports.html"><span data-en="Full reports" data-bm="Laporan penuh">Full reports</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <section class="charts">
+        <div class="card hover chart-card span-7">
+          <div class="c-head">
+            <div><div class="t" data-en="Sales trend" data-bm="Trend jualan">Sales trend</div><div class="s" id="sales-sub">Daily revenue · this month</div></div>
+            <div class="seg" id="sales-seg"><button class="on">30D</button><button>90D</button><button>1Y</button></div>
+          </div>
+          <div id="sales-chart"></div>
+        </div>
+        <div class="card hover chart-card span-5">
+          <div class="c-head"><div><div class="t" data-en="Order status" data-bm="Status tempahan">Order status</div><div class="s" data-en="12 orders this month" data-bm="12 tempahan bulan ini">12 orders this month</div></div></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div id="donut-chart" style="flex:none"></div>
+            <div class="legend legend-tiles" style="flex-direction:column;flex:1;gap:8px;margin-top:0" id="donut-legend"></div>
+          </div>
+        </div>
+        <div class="card hover chart-card span-4">
+          <div class="c-head"><div><div class="t" data-en="Monthly revenue" data-bm="Hasil bulanan">Monthly revenue</div><div class="s" data-en="RM · last 7 months" data-bm="RM · 7 bulan lepas">RM · last 7 months</div></div></div>
+          <div id="bar-chart"></div>
+        </div>
+        <div class="card hover chart-card span-4">
+          <div class="c-head"><div><div class="t" data-en="Revenue by package" data-bm="Hasil ikut pakej">Revenue by package</div><div class="s" data-en="Share of total" data-bm="Bahagian daripada jumlah">Share of total</div></div></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div id="pie-chart" style="flex:none"></div>
+            <div class="legend legend-tiles" style="flex-direction:column;flex:1;gap:8px;margin-top:0" id="pie-legend"></div>
+          </div>
+        </div>
+        <div class="card hover chart-card span-4">
+          <div class="c-head"><div><div class="t" data-en="Weekly orders" data-bm="Tempahan mingguan">Weekly orders</div><div class="s" data-en="Volume · last 8 weeks" data-bm="Jumlah · 8 minggu lepas">Volume · last 8 weeks</div></div></div>
+          <div id="area-chart"></div>
+        </div>
+      </section>
+
+      <!-- CALENDAR + SCHEDULE -->
+      <div class="sec-head"><h2 data-en="Events & schedule" data-bm="Majlis & jadual">Events & schedule</h2><span class="rule"></span>
+        <a class="act" href="calendar.html"><span data-en="Manage events" data-bm="Urus majlis">Manage events</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <section class="mid-grid">
+        <div class="card cal">
+          <div class="cal-top">
+            <div class="mo"><span data-en="August" data-bm="Ogos">August</span> <span class="yr">2026</span></div>
+            <a class="act" href="calendar.html" style="font-size:11.5px;color:var(--graphite)" data-en="Open calendar" data-bm="Buka kalendar">Open calendar</a>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="legend" style="margin-top:18px;gap:16px">
+            <div class="li"><span class="badge-s b-confirmed"><i></i><span data-en="Confirmed" data-bm="Disahkan">Confirmed</span></span></div>
+            <div class="li"><span class="badge-s b-preparing"><i></i><span data-en="Preparing" data-bm="Sedang sedia">Preparing</span></span></div>
+            <div class="li"><span class="badge-s b-pending"><i></i><span data-en="Pending" data-bm="Menunggu">Pending</span></span></div>
+            <div class="li"><span class="badge-s b-completed"><i></i><span data-en="Completed" data-bm="Selesai">Completed</span></span></div>
+          </div>
+        </div>
+        <div class="card sched">
+          <div class="sched-h"><div class="t" data-en="Today's schedule" data-bm="Jadual hari ini">Today's schedule</div><div class="cnt" data-en="5 tasks" data-bm="5 tugasan">5 tasks</div></div>
+          <div class="timeline" id="timeline"></div>
+        </div>
+      </section>
+
+      <!-- RECENT ORDERS -->
+      <div class="sec-head"><h2 data-en="Recent orders" data-bm="Tempahan terkini">Recent orders</h2><span class="rule"></span>
+        <a class="act" href="orders.html"><span data-en="View all orders" data-bm="Lihat semua tempahan">View all orders</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <section class="card tbl-card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th data-en="Customer" data-bm="Pelanggan">Customer</th><th data-en="Package" data-bm="Pakej">Package</th><th class="r">Pax</th><th data-en="Venue" data-bm="Lokasi">Venue</th>
+              <th class="r" data-en="Amount" data-bm="Jumlah">Amount</th><th data-en="Status" data-bm="Status">Status</th><th data-en="Payment" data-bm="Bayaran">Payment</th>
+            </tr></thead>
+            <tbody id="orders-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- FINANCE OVERVIEW -->
+      <div class="sec-head"><h2 data-en="Finance overview" data-bm="Ringkasan kewangan">Finance overview</h2><span class="rule"></span></div>
+      <section class="duo-grid">
+        <div class="card pad">
+          <div class="card-title" data-en="Invoice summary" data-bm="Ringkasan invois">Invoice summary</div>
+          <div class="card-sub" data-en="Aug 2026 · RM 32,200 booked" data-bm="Ogos 2026 · RM 32,200 ditempah">Aug 2026 · RM 32,200 booked</div>
+          <div class="inv-stats">
+            <div class="inv-stat"><div class="n">RM 4.1k</div><div class="l"><i style="background:var(--green)"></i><span data-en="Paid" data-bm="Dibayar">Paid</span></div></div>
+            <div class="inv-stat"><div class="n">RM 21.7k</div><div class="l"><i style="background:var(--amber)"></i><span data-en="Outstanding" data-bm="Tertunggak">Outstanding</span></div></div>
+            <div class="inv-stat"><div class="n">RM 1.6k</div><div class="l"><i style="background:var(--red)"></i><span data-en="Overdue" data-bm="Lewat">Overdue</span></div></div>
+          </div>
+          <div class="inv-list" id="inv-list"></div>
+        </div>
+        <div class="card pad">
+          <div class="card-title" data-en="Revenue analytics" data-bm="Analitik hasil">Revenue analytics</div>
+          <div class="card-sub" data-en="Year-to-date performance" data-bm="Prestasi tahun semasa">Year-to-date performance</div>
+          <div class="ra-hero">
+            <div>
+              <div class="big num">RM 268,400</div>
+              <span class="trend up" style="margin-top:8px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m5 12 7-7 7 7M12 5v14"/></svg>14.2%</span>
+            </div>
+            <div style="margin-left:auto;text-align:center">
+              <div id="goal-gauge"></div>
+              <div class="muted" style="font-size:10px;font-weight:500;margin-top:4px" data-en="Monthly target" data-bm="Sasaran bulanan">Monthly target</div>
+            </div>
+          </div>
+          <div class="bar-comp" style="margin-bottom:18px">
+            <div class="bc-row"><div class="bc-top"><span data-en="Last month" data-bm="Bulan lepas">Last month</span><b class="num">RM 28,000</b></div><div class="bc-track"><div class="bc-fill soft" data-w="85"></div></div></div>
+            <div class="bc-row"><div class="bc-top"><span data-en="This month" data-bm="Bulan ini">This month</span><b class="num">RM 33,000</b></div><div class="bc-track"><div class="bc-fill" data-w="100"></div></div></div>
+          </div>
+          <div class="ra-rows">
+            <div class="ra-row"><span class="k" data-en="Top package" data-bm="Pakej paling laris">Top package</span><span class="v">Buffet RM13.50</span></div>
+            <div class="ra-row"><span class="k" data-en="Avg booking value" data-bm="Purata nilai tempahan">Avg booking value</span><span class="v num">RM 2,980</span></div>
+            <div class="ra-row"><span class="k" data-en="Peak booking month" data-bm="Bulan puncak tempahan">Peak booking month</span><span class="v" data-en="December 2025" data-bm="Disember 2025">December 2025</span></div>
+            <div class="ra-row"><span class="k" data-en="Monthly growth" data-bm="Pertumbuhan bulanan">Monthly growth</span><span class="v">+17.9%</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEAM & CUSTOMERS -->
+      <div class="sec-head"><h2 data-en="Customers & notifications" data-bm="Pelanggan & notifikasi">Customers & notifications</h2><span class="rule"></span></div>
+      <section class="duo-grid">
+        <div class="card pad">
+          <div class="card-title" data-en="Customer analytics" data-bm="Analitik pelanggan">Customer analytics</div>
+          <div class="card-sub" data-en="This quarter" data-bm="Suku ini">This quarter</div>
+          <div class="ca-top">
+            <div class="ca-stat"><div class="n">38</div><div class="l" data-en="New customers" data-bm="Pelanggan baharu">New customers</div></div>
+            <div class="ca-stat"><div class="n">84%</div><div class="l" data-en="Retention" data-bm="Pengekalan">Retention</div></div>
+          </div>
+          <div class="mono-label" style="margin-bottom:12px" data-en="Top customers" data-bm="Pelanggan teratas">Top customers</div>
+          <div class="top-cust" id="top-cust"></div>
+        </div>
+        <div class="card pad">
+          <div class="card-title" data-en="Notifications" data-bm="Notifikasi">Notifications</div>
+          <div class="card-sub" id="notif-sub">4 unread</div>
+          <div class="notif-list" id="notif-list"></div>
+        </div>
+      </section>
+
+      <!-- QUICK ACTIONS -->
+      <div class="sec-head"><h2 data-en="Quick actions" data-bm="Tindakan pantas">Quick actions</h2><span class="rule"></span></div>
+      <section class="qa-grid" id="qa-grid"></section>
+
+      <div class="footer-note" data-en="Qaseh Katering Ops · demo data · Langkap, Teluk Intan, Perak" data-bm="Qaseh Katering Ops · data demo · Langkap, Teluk Intan, Perak">Qaseh Katering Ops · demo data · Langkap, Teluk Intan, Perak</div>
+    </div>
+  </main>
+</div>
+<div class="tt" id="tooltip"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports — Qaseh Katering Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body data-page="reports">
+<div class="app">
+  <aside id="sidebar"></aside>
+  <main class="main">
+    <header id="topbar"></header>
+    <div class="content">
+
+      <div class="page-head">
+        <div><div class="ph-t" data-en="Reports" data-bm="Laporan">Reports</div><div class="ph-s" data-en="Business analytics & performance" data-bm="Analitik & prestasi perniagaan">Business analytics & performance</div></div>
+        <div class="grow"></div>
+        <div class="select"><select id="period">
+          <option data-en="Last 12 months" data-bm="12 bulan lepas">Last 12 months</option><option data-en="This year" data-bm="Tahun ini">This year</option><option data-en="Last quarter" data-bm="Suku lepas">Last quarter</option>
+        </select></div>
+        <button class="btn" id="export-pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span data-en="Export PDF" data-bm="Eksport PDF">Export PDF</span></button>
+        <button class="btn btn-primary" id="export-csv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span data-en="Export CSV" data-bm="Eksport CSV">Export CSV</span></button>
+      </div>
+
+      <section class="stat-strip" id="rep-stats"></section>
+
+      <!-- charts bento -->
+      <section class="charts">
+        <div class="card chart-card span-8">
+          <div class="c-head"><div><div class="t" data-en="Revenue trend" data-bm="Trend hasil">Revenue trend</div><div class="s" data-en="Daily revenue · rolling 30 days" data-bm="Hasil harian · 30 hari terkini">Daily revenue · rolling 30 days</div></div>
+            <div class="seg"><button class="on">30D</button><button>90D</button><button>1Y</button></div></div>
+          <div id="c-revenue"></div>
+        </div>
+        <div class="card chart-card span-4">
+          <div class="c-head"><div><div class="t" data-en="Yearly comparison" data-bm="Perbandingan tahunan">Yearly comparison</div><div class="s" data-en="Revenue by year" data-bm="Hasil ikut tahun">Revenue by year</div></div></div>
+          <div id="c-yearly"></div>
+        </div>
+
+        <div class="card chart-card span-4">
+          <div class="c-head"><div><div class="t" data-en="Monthly sales" data-bm="Jualan bulanan">Monthly sales</div><div class="s" data-en="RM · last 7 months" data-bm="RM · 7 bulan lepas">RM · last 7 months</div></div></div>
+          <div id="c-monthly"></div>
+        </div>
+        <div class="card chart-card span-4">
+          <div class="c-head"><div><div class="t" data-en="Revenue by event type" data-bm="Hasil ikut jenis majlis">Revenue by event type</div><div class="s" data-en="Share of bookings" data-bm="Bahagian tempahan">Share of bookings</div></div></div>
+          <div style="display:flex;align-items:center;gap:8px"><div id="c-event" style="flex:none"></div><div class="legend legend-tiles" style="flex-direction:column;flex:1;gap:8px;margin-top:0" id="l-event"></div></div>
+        </div>
+        <div class="card chart-card span-4">
+          <div class="c-head"><div><div class="t" data-en="Revenue by package" data-bm="Hasil ikut pakej">Revenue by package</div><div class="s" data-en="Share of total" data-bm="Bahagian daripada jumlah">Share of total</div></div></div>
+          <div style="display:flex;align-items:center;gap:8px"><div id="c-pkg" style="flex:none"></div><div class="legend legend-tiles" style="flex-direction:column;flex:1;gap:8px;margin-top:0" id="l-pkg"></div></div>
+        </div>
+
+        <div class="card chart-card span-6">
+          <div class="c-head"><div><div class="t" data-en="Customer growth" data-bm="Pertumbuhan pelanggan">Customer growth</div><div class="s" data-en="New customers · last 12 months" data-bm="Pelanggan baharu · 12 bulan lepas">New customers · last 12 months</div></div></div>
+          <div id="c-growth"></div>
+        </div>
+        <div class="card chart-card span-6">
+          <div class="c-head"><div><div class="t" data-en="Peak booking months" data-bm="Bulan puncak tempahan">Peak booking months</div><div class="s" data-en="Orders volume by month" data-bm="Jumlah tempahan ikut bulan">Orders volume by month</div></div></div>
+          <div id="c-peak"></div>
+        </div>
+
+        <div class="card chart-card span-6">
+          <div class="c-head"><div><div class="t" data-en="Top selling menu" data-bm="Menu paling laris">Top selling menu</div><div class="s" data-en="Times ordered" data-bm="Kali ditempah">Times ordered</div></div></div>
+          <div id="c-menu" style="margin-top:6px"></div>
+        </div>
+        <div class="card chart-card span-6">
+          <div class="c-head"><div><div class="t" data-en="Best customers" data-bm="Pelanggan terbaik">Best customers</div><div class="s" data-en="By lifetime spend" data-bm="Ikut jumlah belanja">By lifetime spend</div></div></div>
+          <div id="c-topcust" style="margin-top:6px"></div>
+        </div>
+      </section>
+
+      <!-- CUSTOMER REVIEWS -->
+      <div class="sec-head"><h2 data-en="Customer reviews" data-bm="Ulasan pelanggan">Customer reviews</h2><span class="rule"></span>
+        <a class="act" href="index.html#reviews"><span data-en="View public page" data-bm="Lihat laman awam">View public page</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <section class="duo-grid">
+        <div class="card pad">
+          <div class="card-title" data-en="Recent reviews" data-bm="Ulasan terkini">Recent reviews</div>
+          <div class="card-sub" id="fb-sub">Submitted by customers on your website</div>
+          <div class="toolbar" style="margin-bottom:6px">
+            <div class="select"><select id="fb-frate">
+              <option value="" data-en="All ratings" data-bm="Semua penilaian">All ratings</option>
+              <option value="5" data-en="5 stars" data-bm="5 bintang">5 stars</option><option value="4" data-en="4 stars" data-bm="4 bintang">4 stars</option><option value="3" data-en="3 stars" data-bm="3 bintang">3 stars</option><option value="2" data-en="2 stars" data-bm="2 bintang">2 stars</option><option value="1" data-en="1 star" data-bm="1 bintang">1 star</option>
+            </select></div>
+          </div>
+          <div id="fb-list"></div>
+        </div>
+        <div class="card pad">
+          <div class="card-title" data-en="Satisfaction" data-bm="Kepuasan">Satisfaction</div>
+          <div class="card-sub" data-en="Average rating & breakdown" data-bm="Penilaian purata & pecahan">Average rating & breakdown</div>
+          <div id="fb-summary"></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+<div class="tt" id="tooltip"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/reports.js"></script>
+</body>
+</html>
