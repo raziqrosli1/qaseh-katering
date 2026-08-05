@@ -19,10 +19,6 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  /* preloader */
-  function hideLoader() { const l = $('#lp-loader'); if (l) { l.classList.add('hide'); setTimeout(() => l.remove(), 550); } }
-  window.addEventListener('load', () => setTimeout(hideLoader, 500));
-  setTimeout(hideLoader, 2600);
 
   /* ---- render packages (from real Qaseh pricing) ---- */
   const popular = 'Buffet RM13.50';

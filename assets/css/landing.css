@@ -338,7 +338,13 @@ body.lp{background:var(--bg);color:var(--ink)}
   padding:8px 13px;border-radius:999px;background:none;border:none;cursor:pointer;transition:all .15s}
 .lp-fbbtn svg{width:15px;height:15px}
 .lp-fbbtn:hover{background:var(--bg-soft);color:var(--ink)}
-@media(max-width:600px){.lp-nav{width:calc(100% - 24px);top:10px;margin-top:10px;padding-left:14px}.lp-fbbtn span,.lp-nav .btn:not(.btn-primary){display:none}}
+@media(max-width:600px){
+  .lp-nav{width:calc(100% - 20px);top:10px;margin-top:10px;padding:8px 8px 8px 12px;gap:8px}
+  .lp-brand span:not(.logo){display:none}   /* logo only, free up space */
+  .lp-fbbtn{display:none}                    /* hide Ulasan; keep the 2 buttons */
+  .lp-nav .btn{padding:9px 12px;font-size:11.5px}
+  .lp-nav .btn svg{width:13px;height:13px}
+}
 
 /* ============ FEEDBACK POPUP (command-palette style) ============ */
 .lp-modal-wrap{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:24px;
@@ -572,3 +578,50 @@ body.lp{background:var(--bg);color:var(--ink)}
 .lp-dark .lp-faq summary{color:#fff}
 .lp-dark .lp-faq summary::after{color:rgba(255,255,255,.55)}
 .lp-dark .lp-faq p{color:rgba(255,255,255,.62)}
+
+/* ============================================================
+   SELF-CONTAINED VISUALS — no external image dependency
+   (reliable on any connection / offline demo)
+   ============================================================ */
+.lp-hero-grid{
+  background-image:
+    radial-gradient(120% 100% at 100% 0%, rgba(124,58,237,.30), transparent 55%),
+    linear-gradient(135deg,#17121f 0%,#0b0b0d 100%) !important;
+  background-color:#0b0b0d;
+}
+.lp-gtile.g-wed{background:linear-gradient(150deg,#7C3AED,#4F46E5)}
+.lp-gtile.g-eng{background:linear-gradient(150deg,#06B6D4,#0891B2)}
+.lp-gtile.g-rama{background:linear-gradient(150deg,#16A34A,#0D9488)}
+.lp-gtile.g-bday{background:linear-gradient(150deg,#F97316,#EA580C)}
+.lp-gtile.g-corp{background:linear-gradient(150deg,#2563EB,#0EA5E9)}
+.lp-gtile.g-priv{background:linear-gradient(150deg,#374151,#0A0A0A)}
+
+/* ============================================================
+   MOBILE POLISH — fix off-center popups + compact estimator
+   (appended last so these win)
+   ============================================================ */
+@media(max-width:600px){
+  /* feedback popup: vw width + wrapper padding overflowed → recenter cleanly */
+  .lp-modal-wrap{padding:14px}
+  .lp-modal{width:100%;max-width:100%;padding:24px 20px}
+  .lp-rstars{gap:5px;margin:14px 0 4px}
+  .lp-rstars svg{width:30px;height:30px}
+  .lp-modal-head h3{font-size:18px}
+
+  /* tighter section rhythm on phones */
+  .lp-section{padding:44px 0}
+  .lp-h2{font-size:26px}
+
+  /* estimator + enquiry: comfortable padding, no overflow */
+  .lp-quote{padding:22px 18px;border-radius:20px}
+  .lp-quote h2{font-size:24px}
+  .lp-quote-grid{gap:16px;margin-top:22px}
+  .lp-panel{padding:18px 16px}
+  .lp-est{padding:16px}
+
+  /* "add package" row: stack so the select + qty + button never overflow */
+  .lp-addrow{flex-wrap:wrap}
+  .lp-addrow select{flex:1 1 100%}
+  .lp-addrow input{flex:1 1 auto;width:auto;text-align:left}
+  .lp-addrow .btn{flex:0 0 auto}
+}

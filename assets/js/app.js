@@ -185,6 +185,7 @@
         if (window.matchMedia('(max-width:980px)').matches) {
           const open = document.body.classList.toggle('sidebar-open');
           $('#scrim').classList.toggle('show', open);
+          syncScrollLock();
         } else {
           const on = document.body.classList.toggle('nav-collapsed');
           try { localStorage.setItem('seleraNav', on ? 'collapsed' : 'expanded'); } catch (e) {}
@@ -198,6 +199,7 @@
       gs.readOnly = true;
       gs.addEventListener('focus', openPalette);
       gs.addEventListener('click', openPalette);
+      const sfield = tb.querySelector('.search'); if (sfield) sfield.addEventListener('click', openPalette);
       document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openPalette(); } });
     }
     // roots
@@ -227,9 +229,17 @@
     });
   }
 
+  // Robust scroll lock: lock <html> whenever any overlay is open, unlock otherwise.
+  function syncScrollLock() {
+    const locked = document.body.classList.contains('sidebar-open')
+      || isDrawerOpen() || isModalOpen() || !!$('#cmdk-root');
+    document.documentElement.style.overflow = locked ? 'hidden' : '';
+  }
+
   function closeMobileNav() {
     document.body.classList.remove('sidebar-open');
     if (!isDrawerOpen() && !isModalOpen()) { const s = $('#scrim'); if (s) s.classList.remove('show'); }
+    syncScrollLock();
   }
   function applyResponsiveNav() {
     const mobile = window.matchMedia('(max-width:980px)').matches;
@@ -238,6 +248,7 @@
     } else {
       document.body.classList.remove('sidebar-open');
       if (!isDrawerOpen() && !isModalOpen()) { const s = $('#scrim'); if (s) s.classList.remove('show'); }
+      syncScrollLock();
       try { if (localStorage.getItem('seleraNav') === 'collapsed') document.body.classList.add('nav-collapsed'); } catch (e) {}
     }
   }
@@ -261,11 +272,13 @@
     const root = el('div', 'cmdk-wrap'); root.id = 'cmdk-root';
     root.innerHTML = `
       <div class="cmdk">
-        <div class="cmdk-in">${sIcon('search')}<input id="cmdk-input" placeholder="Search orders, customers, invoices, pages…" autocomplete="off"><span class="esc">ESC</span></div>
+        <div class="cmdk-in">${sIcon('search')}<input id="cmdk-input" placeholder="${tf('Search orders, customers, invoices, pages…', 'Cari tempahan, pelanggan, invois, halaman…')}" autocomplete="off"><button class="cmdk-x" id="cmdk-close" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="cmdk-list" id="cmdk-list"></div>
-        <div class="cmdk-foot"><span><b>↑ ↓</b> navigate</span><span><b>↵</b> open</span><span><b>esc</b> close</span></div>
+        <div class="cmdk-foot"><span><b>↑ ↓</b> ${tf('navigate', 'gerak')}</span><span><b>↵</b> ${tf('open', 'buka')}</span><span><b>esc</b> ${tf('close', 'tutup')}</span></div>
       </div>`;
     document.body.appendChild(root);
+    root.addEventListener('click', e => { if (e.target === root) closePalette(); });
+    root.querySelector('#cmdk-close').addEventListener('click', closePalette);
     const input = $('#cmdk-input'), list = $('#cmdk-list');
     let results = [], sel = 0;
     function filter(q) {
@@ -295,11 +308,11 @@
       else if (e.key === 'Enter') { e.preventDefault(); if (results[sel]) results[sel].run(); }
     });
     refresh();
-    $('#scrim').classList.add('show');
     requestAnimationFrame(() => { root.classList.add('show'); input.focus(); });
     _pal = root;
+    syncScrollLock();
   }
-  function closePalette() { const r = $('#cmdk-root'); if (r) { r.classList.remove('show'); setTimeout(() => r.remove(), 200); if (!isDrawerOpen() && !isModalOpen()) $('#scrim') && $('#scrim').classList.remove('show'); } }
+  function closePalette() { const r = $('#cmdk-root'); if (r) { r.classList.remove('show'); setTimeout(() => { r.remove(); syncScrollLock(); }, 200); if (!isDrawerOpen() && !isModalOpen()) $('#scrim') && $('#scrim').classList.remove('show'); } }
 
   /* ---------- DRAWER ---------- */
   function openDrawer(o) {
@@ -312,13 +325,14 @@
     root.querySelector('.x').addEventListener('click', closeDrawer);
     if (o.onMount) o.onMount(root);
     requestAnimationFrame(() => { $('#scrim').classList.add('show'); root.classList.add('show'); });
+    syncScrollLock();
   }
-  function closeDrawer() { const r = $('#drawer-root'); if (r) r.classList.remove('show'); if (!isModalOpen()) $('#scrim') && $('#scrim').classList.remove('show'); }
+  function closeDrawer() { const r = $('#drawer-root'); if (r) r.classList.remove('show'); if (!isModalOpen()) $('#scrim') && $('#scrim').classList.remove('show'); syncScrollLock(); }
 
   /* ---------- MODAL ---------- */
   function openModal(o) {
     const root = $('#modal-root');
-    root.innerHTML = `<div class="modal" style="${o.width ? 'width:' + o.width : ''}">
+    root.innerHTML = `<div class="modal" style="${o.width ? 'width:min(' + o.width + ',96vw)' : ''}">
       <div class="modal-head"><div><div class="mh-t">${o.title}</div>${o.subtitle ? `<div class="mh-s">${o.subtitle}</div>` : ''}</div>
         <button class="x" aria-label="Close">${sIcon('x')}</button></div>
       <div class="modal-body">${o.body}</div>
@@ -326,8 +340,17 @@
     root.querySelector('.x').addEventListener('click', closeModal);
     if (o.onMount) o.onMount(root);
     requestAnimationFrame(() => { $('#scrim').classList.add('show'); root.classList.add('show'); });
+    syncScrollLock();
   }
-  function closeModal() { const r = $('#modal-root'); if (r) r.classList.remove('show'); if (!isDrawerOpen()) $('#scrim') && $('#scrim').classList.remove('show'); }
+  function closeModal() { const r = $('#modal-root'); if (r) r.classList.remove('show'); if (!isDrawerOpen()) $('#scrim') && $('#scrim').classList.remove('show'); syncScrollLock(); }
+  // Print only the open invoice/receipt document (body.printing scopes the print stylesheet).
+  function printDoc() {
+    document.body.classList.add('printing');
+    const done = () => { document.body.classList.remove('printing'); window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done);
+    window.print();
+    setTimeout(done, 1500);
+  }
   const isModalOpen = () => $('#modal-root') && $('#modal-root').classList.contains('show');
   const isDrawerOpen = () => $('#drawer-root') && $('#drawer-root').classList.contains('show');
 
@@ -584,7 +607,7 @@
     openModal({
       title: tf('Invoice ', 'Invois ') + inv.no, subtitle: esc(inv.customer) + ' · ' + D.RM(inv.total), body, foot, width: '720px',
       onMount(root) {
-        root.querySelector('[data-act=print]').onclick = () => window.print();
+        root.querySelector('[data-act=print]').onclick = () => printDoc();
         root.querySelector('[data-act=dl]').onclick = () => toast(tf('Invoice ', 'Invois ') + inv.no + tf(' downloaded (demo PDF)', ' dimuat turun (PDF demo)'));
       }
     });
@@ -739,7 +762,7 @@
         <div class="form-field"><label>${tf('Email (optional)', 'Emel (pilihan)')}</label><input id="nb-email" value="${esc(prefill.email || '')}" placeholder="cth. nama@gmail.com"></div>
         <div class="form-field"><label>${tf('Event type', 'Jenis majlis')}</label><select id="nb-event">${evOpts}</select></div>
       </div>
-      <div class="form-row">
+      <div class="form-row keep2">
         <div class="form-field"><label>${tf('Event date', 'Tarikh majlis')}</label><input id="nb-date" type="date" value="${prefill.date || ''}"></div>
         <div class="form-field"><label>${tf('Time', 'Masa')}</label><input id="nb-time" type="time" value="11:00"></div>
       </div>
@@ -762,7 +785,7 @@
         <div id="nb-extras" style="max-height:200px;overflow:auto;border:1px solid var(--line);border-radius:12px"></div>
       </div></div>
 
-      <div class="form-row">
+      <div class="form-row keep2">
         <div class="form-field"><label>${tf('Deposit received (RM)', 'Deposit diterima (RM)')}</label><input id="nb-deposit" type="number" min="0" value="500"></div>
         <div class="form-field"><label>${tf('Payment method', 'Kaedah bayaran')}</label><select id="nb-method">${methodOpts}</select></div>
       </div>
@@ -867,7 +890,7 @@
     statusBadge, payBadge, invBadge, emptyState, countUp, fmtDate, fmtTime, cap,
     orderDrawer, invoiceModal, notifDrawer, stars, openPalette, closePalette, openAssistant, openFeedback,
     newBooking,
-    currentRole: getRole, canSeeSales, lang: getLang, tf, localizeDom,
+    currentRole: getRole, canSeeSales, lang: getLang, tf, localizeDom, printDoc,
   };
 
 })(window);

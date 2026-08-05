@@ -79,9 +79,37 @@
     C.area($('#area-chart'), D.charts.weekly, { h: 210, color: D.CLR.blue, axisFmt: v => Math.round(v) });
   }
 
+  /* mobile: an agenda list is far clearer than a cramped 7-column month grid */
+  function renderAgenda(grid) {
+    grid.classList.remove('cal-grid', 'cal-lg');
+    grid.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+    const stColor = { confirmed: D.CLR.blue, preparing: D.CLR.orange, pending: D.CLR.yellow, completed: D.CLR.green, cancelled: D.CLR.red };
+    const loc = S.lang() === 'bm' ? 'ms-MY' : 'en-GB';
+    const up = D.orders.filter(o => o.date >= '2026-08-03' && o.status !== 'cancelled')
+      .sort((a, b) => a.date.localeCompare(b.date)).slice(0, 6);
+    if (!up.length) { grid.innerHTML = `<div class="muted" style="font-size:12px;padding:8px 2px">${tf('No upcoming events', 'Tiada majlis akan datang')}</div>`; return; }
+    up.forEach(o => {
+      const dt = new Date(o.date + 'T00:00:00');
+      const row = el('div', '', `
+        <div style="min-width:42px;text-align:center">
+          <div style="font-size:17px;font-weight:700;line-height:1">${dt.getDate()}</div>
+          <div class="muted" style="font-size:9px;text-transform:uppercase;letter-spacing:.04em">${dt.toLocaleDateString(loc, { month: 'short' })}</div>
+        </div>
+        <div style="flex:1;min-width:0">
+          <span class="badge-s b-${o.status}"><i></i>${S.esc(o.eventType)}</span>
+          <div class="muted" style="font-size:11px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${S.fmtTime(o.time)} · ${o.guests} pax · ${S.esc(o.venue)}</div>
+        </div>`);
+      row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer';
+      row.addEventListener('click', () => S.orderDrawer(o.id));
+      grid.appendChild(row);
+    });
+  }
+
   /* calendar (August 2026, events from orders) — Notion-style like the Calendar page */
   function renderCal() {
-    const grid = $('#cal-grid'); grid.classList.add('cal-lg');
+    const grid = $('#cal-grid');
+    if (window.matchMedia('(max-width:640px)').matches) { renderAgenda(grid); return; }
+    grid.classList.add('cal-lg');
     ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(d => grid.appendChild(el('div', 'cal-dow', d)));
     const firstDow = 5, days = 31, today = 3;
     const stColor = { confirmed: D.CLR.blue, preparing: D.CLR.orange, pending: D.CLR.yellow, completed: D.CLR.green, cancelled: D.CLR.red };

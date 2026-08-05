@@ -617,8 +617,8 @@ tbody tr:last-child td{border-bottom:none}
 @media(max-width:980px){
   .app{grid-template-columns:1fr}
   /* off-canvas sidebar */
-  .sidebar{display:flex;position:fixed;top:0;left:0;height:100vh;width:min(80vw,272px);padding:22px 16px;
-    transform:translateX(-100%);transition:transform .3s var(--ease);z-index:120;box-shadow:var(--shadow-xl)}
+  .sidebar{display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;width:min(80vw,272px);padding:22px 16px;
+    transform:translateX(-100%);transition:transform .3s var(--ease);z-index:120;box-shadow:var(--shadow-xl);overflow-y:auto;overscroll-behavior:contain}
   body.sidebar-open .sidebar{transform:none}
   .mid-grid{grid-template-columns:1fr}
   .duo-grid,.tri-grid{grid-template-columns:1fr}
@@ -646,13 +646,44 @@ tbody tr:last-child td{border-bottom:none}
   .card.pad{padding:16px}
   .inv-bar{gap:8px}
   .field.search-field{min-width:0;max-width:none;width:100%}
-  #home-btn{display:none}
+  /* topbar global search → clean icon button on phones */
+  .topbar .search{width:40px;height:40px;flex:none;padding:0;justify-content:center;border-radius:12px;cursor:pointer}
+  .topbar .search input{display:none}
+  /* fix off-center modal: vw width + wrapper padding overflowed the screen */
+  .modal-wrap{padding:12px}
+  .modal{width:100%!important;max-width:100%;max-height:94vh}
+  /* booking form: compact + stack long fields, keep short pairs side-by-side */
+  .modal-body{padding:16px}
+  .form-row{grid-template-columns:1fr;gap:11px;margin-bottom:11px}
+  .form-row.keep2{grid-template-columns:1fr 1fr;gap:10px}
+  .form-field label{margin-bottom:4px;font-size:10.5px}
+  .form-field input,.form-field select,.form-field textarea{padding:9px 11px;font-size:12px;border-radius:9px}
+  .form-field textarea{min-height:60px}
+  #nb-extras{max-height:150px!important}
+  .pay-box{padding:12px}
+  .pay-row{padding:5px 0}
+  /* receipt / invoice doc: fit the narrow screen cleanly */
+  .doc{padding:18px 15px}
+  .doc-top{gap:12px;margin-bottom:18px}
+  .doc-meta .big{font-size:17px}
+  .doc-total{justify-content:stretch;margin-top:10px}
+  .doc-total .box{width:100%}
+  .doc-note{margin-top:16px}
 }
 @media(max-width:380px){
   .kpi-grid,.stat-strip{grid-template-columns:1fr}
 }
 @media print{
-  .sidebar,.topbar,.drawer-foot,.modal-foot,.scrim{display:none!important}
+  .sidebar,.topbar,.drawer-foot,.modal-foot,.scrim,.fab-ai{display:none!important}
+  /* isolate the invoice/receipt when printed via its Print button */
+  body.printing .app,body.printing .fab-ai,body.printing #scrim,body.printing #drawer-root,body.printing #cmdk-root,body.printing #tooltip{display:none!important}
+  body.printing #modal-root{position:static!important;display:block!important;padding:0!important;opacity:1!important;background:none!important}
+  body.printing .modal{width:auto!important;max-width:none!important;max-height:none!important;box-shadow:none!important;border:none!important;border-radius:0!important;overflow:visible!important;transform:none!important}
+  body.printing .modal-head,body.printing .modal-foot{display:none!important}
+  body.printing .modal-body{overflow:visible!important;padding:0!important}
+  body.printing .modal-body>.d-sec{display:none!important}
+  body.printing .doc{border:none!important;padding:0!important;box-shadow:none!important}
+  @page{margin:14mm}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation-duration:.001ms!important;transition-duration:.001ms!important}
@@ -691,7 +722,7 @@ body.nav-collapsed .side-user .dot{display:none}
 
 
 /* ---- COMMAND PALETTE (Ctrl+K) ---- */
-.cmdk-wrap{position:fixed;inset:0;z-index:120;display:flex;justify-content:center;align-items:flex-start;padding-top:12vh;opacity:0;transition:opacity .18s var(--ease);pointer-events:none}
+.cmdk-wrap{position:fixed;inset:0;z-index:120;display:flex;justify-content:center;align-items:flex-start;padding:12vh 16px 16px;background:rgba(10,10,10,.42);backdrop-filter:blur(3px);opacity:0;transition:opacity .18s var(--ease);pointer-events:none}
 .cmdk-wrap.show{opacity:1;pointer-events:auto}
 .cmdk{width:min(600px,94vw);background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-xl);overflow:hidden;transform:translateY(-10px) scale(.99);transition:transform .2s var(--ease)}
 .cmdk-wrap.show .cmdk{transform:none}
@@ -700,6 +731,9 @@ body.nav-collapsed .side-user .dot{display:none}
 .cmdk-in input{flex:1;border:none;outline:none;background:none;font-family:inherit;font-size:15px;color:var(--ink)}
 .cmdk-in input::placeholder{color:var(--faint)}
 .cmdk-in .esc{font-size:10px;color:var(--faint);border:1px solid var(--line-2);border-radius:6px;padding:2px 7px;font-weight:600}
+.cmdk-x{flex:none;width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;cursor:pointer;color:var(--mist);transition:all .15s}
+.cmdk-x svg{width:16px;height:16px}
+.cmdk-x:hover{background:var(--bg-soft);color:var(--ink)}
 .cmdk-list{max-height:56vh;overflow-y:auto;padding:8px}
 .cmdk-cap{font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:10px 10px 6px}
 .cmdk-item{display:flex;align-items:center;gap:12px;padding:10px 10px;border-radius:10px;cursor:pointer}

@@ -9,7 +9,9 @@
 
   const stColor = { confirmed: D.CLR.blue, preparing: D.CLR.orange, pending: D.CLR.yellow, completed: D.CLR.green, cancelled: D.CLR.red };
   const TODAY = new Date(2026, 7, 3);
-  let view = 'month';
+  // On phones the full month grid is too cramped, so start on the Week view (still switchable).
+  const IS_MOBILE = window.matchMedia('(max-width:640px)').matches;
+  let view = IS_MOBILE ? 'week' : 'month';
   let cursor = new Date(2026, 7, 1); // month cursor
   const MONTHS = S.lang() === 'bm'
     ? ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember']
@@ -179,6 +181,12 @@
     $('#view-tabs').querySelector('.on').classList.remove('on'); this.classList.add('on');
     view = this.dataset.v; render();
   }));
+  // sync active tab with the starting view (Week on mobile)
+  (function syncTab() {
+    const vt = $('#view-tabs'); if (!vt) return;
+    const cur = vt.querySelector('.on'); if (cur) cur.classList.remove('on');
+    const btn = vt.querySelector('[data-v="' + view + '"]'); if (btn) btn.classList.add('on');
+  })();
   $('#cal-prev').addEventListener('click', () => { step(-1); });
   $('#cal-next').addEventListener('click', () => { step(1); });
   $('#cal-today').addEventListener('click', () => { cursor = new Date(2026, 7, 1); cursor._weekDay = 3; render(); });

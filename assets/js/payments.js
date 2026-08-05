@@ -100,7 +100,7 @@
     const foot = `<button class="btn" data-dl>${S.sIcon('download')} ${tf('Download', 'Muat turun')}</button><button class="btn btn-primary" data-print>${S.sIcon('printer')} ${tf('Print receipt', 'Cetak resit')}</button>`;
     S.openModal({
       title: (refund ? tf('Refund ', 'Pemulangan ') : tf('Receipt ', 'Resit ')) + p.id, subtitle: S.esc(p.customer) + ' · ' + D.RM(Math.abs(p.amount)), body, foot, width: '640px',
-      onMount(root) { root.querySelector('[data-print]').onclick = () => window.print(); root.querySelector('[data-dl]').onclick = () => S.toast(tf('Receipt ', 'Resit ') + p.id + tf(' downloaded (demo)', ' dimuat turun (demo)')); }
+      onMount(root) { root.querySelector('[data-print]').onclick = () => S.printDoc(); root.querySelector('[data-dl]').onclick = () => S.toast(tf('Receipt ', 'Resit ') + p.id + tf(' downloaded (demo)', ' dimuat turun (demo)')); }
     });
   }
 
