@@ -632,11 +632,24 @@ tbody tr:last-child td{border-bottom:none}
   .page-head .ph-t{font-size:19px}
 }
 @media(max-width:560px){
-  .kpi-grid{grid-template-columns:1fr}
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:12px}
+  .kpi{min-height:116px;padding:14px 13px 12px;gap:8px}
+  .kpi .ic{width:30px;height:30px}
+  .kpi .val{font-size:19px}
+  .kpi .lab{font-size:10.5px;margin-top:4px}
+  .kpi .spark{height:22px}
   .stat-strip{grid-template-columns:1fr 1fr}
   .charts{grid-template-columns:1fr}
   .span-7,.span-8,.span-5,.span-4,.span-6,.span-3,.span-12{grid-column:span 1}
-  .home-btn,#home-btn{display:none}
+  .content{padding:16px 13px 44px;gap:16px}
+  .chart-card{padding:16px}
+  .card.pad{padding:16px}
+  .inv-bar{gap:8px}
+  .field.search-field{min-width:0;max-width:none;width:100%}
+  #home-btn{display:none}
+}
+@media(max-width:380px){
+  .kpi-grid,.stat-strip{grid-template-columns:1fr}
 }
 @media print{
   .sidebar,.topbar,.drawer-foot,.modal-foot,.scrim{display:none!important}
