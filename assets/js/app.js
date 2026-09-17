@@ -128,6 +128,11 @@
   function mountShell(opts) {
     opts = opts || {};
     const page = opts.page || document.body.dataset.page || 'dashboard';
+    // ---- auth guard (simulated, client-side) ----
+    const cu = (window.QAUTH && QAUTH.current()) || null;
+    if (window.QAUTH && !cu) { location.replace('login.html'); return; }
+    // non-owners always use their account role (block "view as" escalation)
+    if (cu && cu.role !== 'owner') { try { localStorage.setItem('selera_role', cu.role); } catch (e) {} }
     // role-based access
     const role = getRole(); const roleDef = ROLES[role] || ROLES.owner;
     if (!roleDef.pages.includes(page)) { location.replace(roleDef.pages[0] + '.html'); return; }
@@ -148,15 +153,25 @@
         });
         html += `</nav>`;
       });
+      const uName = cu ? cu.name : D.USER.name;
+      const uInit = cu && window.QAUTH ? QAUTH.initials(cu.name) : D.USER.initials;
+      const isOwner = cu ? cu.role === 'owner' : true;
+      const pendingCount = window.QAUTH ? QAUTH.all().filter(u => u.status === 'pending').length : 0;
       html += `<div class="side-foot">
-        <a class="side-user" href="${roleDef.pages.includes('settings') ? 'settings.html' : 'dashboard.html'}"><span class="avatar">${D.USER.initials}</span><span class="meta"><b>${D.USER.name}</b><small>${roleDef.label}</small></span><span class="dot"></span></a>
+        <a class="side-user" href="${roleDef.pages.includes('settings') ? 'settings.html' : 'dashboard.html'}"><span class="avatar">${uInit}</span><span class="meta"><b>${esc(uName)}</b><small>${roleDef.label}</small></span><span class="dot"></span></a>
         <div class="lang-switch"><span>${I18N.ui.language[L()]}</span><div class="lang-seg"><button type="button" data-lang="en" class="${getLang() === 'en' ? 'on' : ''}">EN</button><button type="button" data-lang="bm" class="${getLang() === 'bm' ? 'on' : ''}">BM</button></div></div>
-        <div class="role-switch"><span>${I18N.ui.viewAs[L()]}</span><select id="role-select">${Object.keys(ROLES).map(r => `<option value="${r}" ${r === role ? 'selected' : ''}>${ROLES[r].label}</option>`).join('')}</select></div>
+        ${isOwner ? `<div class="role-switch"><span>${I18N.ui.viewAs[L()]}</span><select id="role-select">${Object.keys(ROLES).map(r => `<option value="${r}" ${r === role ? 'selected' : ''}>${ROLES[r].label}</option>`).join('')}</select></div>` : ''}
+        <div class="side-auth">
+          ${isOwner ? `<button type="button" class="btn btn-sm" id="btn-access">${tf('Access', 'Akses')}${pendingCount ? ` <span class="badge">${pendingCount}</span>` : ''}</button>` : ''}
+          <button type="button" class="btn btn-sm" id="btn-logout">${tf('Log out', 'Log keluar')}</button>
+        </div>
       </div>`;
       sb.innerHTML = html;
       sb.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => { if (b.dataset.lang !== getLang()) { setLang(b.dataset.lang); location.reload(); } }));
       const rs = $('#role-select');
       if (rs) rs.addEventListener('change', e => { try { localStorage.setItem('selera_role', e.target.value); } catch (_) {} location.href = 'dashboard.html'; });
+      const lo = $('#btn-logout'); if (lo) lo.addEventListener('click', () => { if (window.QAUTH) QAUTH.logout(); location.replace('login.html'); });
+      const ac = $('#btn-access'); if (ac) ac.addEventListener('click', accessModal);
     }
     // topbar
     const tb = $('#topbar');
@@ -423,6 +438,9 @@
     const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(o.mapQuery || o.venue);
     const depPct = o.total > 0 ? Math.min(100, Math.round(o.deposit / o.total * 100)) : 0;
     const pkg = D.PACKAGES[o.pkg];
+    const fulfilLabel = (o.fulfilment === 'pickup')
+      ? tf('Self-pickup (food only)', 'Ambil sendiri (makanan sahaja)')
+      : tf('Delivery & full setup', 'Hantar & pasang lengkap');
     const body = `
       <div class="d-sec">
         <div class="flex between center" style="margin-bottom:14px">
@@ -472,6 +490,8 @@
           <div><div class="k">${tf('Guest count', 'Bilangan tetamu')}</div><div class="v strong">${o.guests} pax</div></div>
           <div><div class="k">${tf('Date', 'Tarikh')}</div><div class="v">${fmtDate(o.date, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div></div>
           <div><div class="k">${tf('Time', 'Masa')}</div><div class="v">${fmtTime(o.time)} – ${fmtTime(o.endTime)}</div></div>
+          <div><div class="k">${tf('Order type', 'Jenis tempahan')}</div><div class="v strong">${fulfilLabel}</div></div>
+          <div><div class="k">${tf('Sales advisor', 'Ejen jualan')}</div><div class="v">${o.advisor ? esc(o.advisor) : '—'}</div></div>
         </div>
         <div class="kv one" style="margin-bottom:12px">
           <div><div class="k">${tf('Venue', 'Lokasi')}</div><div class="v strong">${esc(o.venue)}</div></div>
@@ -504,7 +524,9 @@
           <div><div class="k">${tf('Waiters', 'Pramusaji')}</div><div class="v">${o.services.waiters} ${tf('crew', 'orang')}</div></div>
           <div><div class="k">${tf('Kitchen team', 'Pasukan dapur')}</div><div class="v">${o.services.kitchen} ${tf('crew', 'orang')}</div></div>
         </div>
-        ${o.addOns && o.addOns.length ? `<div class="k" style="margin:14px 0 8px">${tf('Add-ons', 'Tambahan')}</div><div class="chips">${o.addOns.map(a => `<span class="chip-t">${esc(a)}</span>`).join('')}</div>` : ''}
+        ${(o.addOnItems && o.addOnItems.length)
+          ? `<div class="k" style="margin:14px 0 8px">${tf('Add-ons', 'Tambahan')}</div><div class="chips">${o.addOnItems.map(a => `<span class="chip-t">${a.qty > 1 ? a.qty + '× ' : ''}${esc(a.name)}${showMoney ? ' · ' + D.RM(a.price * a.qty) : ''}</span>`).join('')}</div>`
+          : (o.addOns && o.addOns.length ? `<div class="k" style="margin:14px 0 8px">${tf('Add-ons', 'Tambahan')}</div><div class="chips">${o.addOns.map(a => `<span class="chip-t">${esc(a)}</span>`).join('')}</div>` : '')}
       </div>
 
       <div class="d-sec">
@@ -574,21 +596,28 @@
     const stampLabel = inv.status === 'paid' ? tf('PAID', 'DIBAYAR') : inv.status === 'overdue' ? tf('OVERDUE', 'TERTUNGGAK') : inv.status === 'refunded' ? tf('REFUNDED', 'DIPULANGKAN') : tf('UNPAID', 'BELUM BAYAR');
     const lineTotal = inv.unit * inv.guests;
     const sst = Math.round(inv.total * 0.06);
+    const addOnRows = (inv.addOnItems && inv.addOnItems.length)
+      ? inv.addOnItems.map(a => `<tr><td>${esc(a.name)}</td><td class="td-r">${a.qty}</td><td class="td-r">${D.RM(a.price)}</td><td class="td-r amt">${D.RM(a.price * a.qty)}</td></tr>`).join('')
+      : '';
+    const addOnsSum = (inv.addOnItems && inv.addOnItems.length) ? inv.addOnItems.reduce((s, a) => s + a.price * a.qty, 0) : 0;
+    const serviceAmt = Math.max(0, inv.total - lineTotal - addOnsSum - sst);
+    const fulfilTxt = inv.fulfilment === 'pickup' ? tf('Self-pickup (food only)', 'Ambil sendiri (makanan sahaja)') : tf('Delivery & full setup', 'Hantar & pasang lengkap');
     const body = `
       <div class="doc" id="doc-print">
         <div class="doc-top">
           <div class="doc-brand"><span class="logo">${sIcon('logo')}</span><div><b>${D.BRAND.name} Catering</b><small>${D.BRAND.legal}</small><small>${D.BRAND.reg}</small></div></div>
-          <div class="doc-meta"><div class="big">${tf('INVOICE', 'INVOIS')}</div><small>${inv.no}</small><small>${tf('Issued', 'Dikeluarkan')}: ${inv.issued}</small><small>${tf('Due', 'Tarikh akhir')}: ${fmtDate(inv.due)}</small></div>
+          <div class="doc-meta"><div class="big">${tf('INVOICE', 'INVOIS')}</div><small>${inv.no}</small><small>${tf('Issued', 'Dikeluarkan')}: ${inv.issued}</small><small>${tf('Due', 'Tarikh akhir')}: ${fmtDate(inv.due)}</small><small>${tf('Order type', 'Jenis')}: ${fulfilTxt}</small>${inv.advisor ? `<small>${tf('Advisor', 'Ejen')}: ${esc(inv.advisor)}</small>` : ''}</div>
         </div>
         <div class="doc-parties">
           <div class="p"><div class="st">${tf('Billed To', 'Bil Kepada')}</div><p><b>${esc(inv.customer)}</b><br>${esc(inv.email)}<br>${esc(inv.phone)}<br>${esc(inv.address)}</p></div>
           <div class="p" style="text-align:right"><div class="st">${tf('From', 'Daripada')}</div><p>${D.BRAND.name} Catering<br>${esc(D.BRAND.address)}<br>${D.BRAND.phone}<br>${D.BRAND.ssm}</p></div>
         </div>
         <table>
-          <thead><tr><th>${tf('Description', 'Keterangan')}</th><th class="r">${tf('Qty (pax)', 'Kuantiti (pax)')}</th><th class="r">${tf('Unit', 'Seunit')}</th><th class="r">${tf('Amount', 'Jumlah')}</th></tr></thead>
+          <thead><tr><th>${tf('Description', 'Keterangan')}</th><th class="r">${tf('Qty', 'Kuantiti')}</th><th class="r">${tf('Unit', 'Seunit')}</th><th class="r">${tf('Amount', 'Jumlah')}</th></tr></thead>
           <tbody>
             <tr><td><b>${esc(inv.pkg)}</b><br><span class="muted" style="font-size:11px">${tf('Catering package', 'Pakej katering')} · ${esc(inv.venue)}</span></td><td class="td-r">${inv.guests}</td><td class="td-r">${D.RM(inv.unit)}</td><td class="td-r amt">${D.RM(lineTotal)}</td></tr>
-            <tr><td>${tf('Service, setup & logistics', 'Servis, pemasangan & logistik')}</td><td class="td-r">1</td><td class="td-r">—</td><td class="td-r amt">${D.RM(Math.max(0, inv.total - lineTotal - sst))}</td></tr>
+            ${addOnRows}
+            ${serviceAmt > 0 ? `<tr><td>${tf('Service, setup & logistics', 'Servis, pemasangan & logistik')}</td><td class="td-r">1</td><td class="td-r">—</td><td class="td-r amt">${D.RM(serviceAmt)}</td></tr>` : ''}
           </tbody>
         </table>
         <div class="doc-total"><div class="box">
@@ -648,8 +677,11 @@
       const o = D.orders.reduce((s, x) => s + (x.payStatus !== 'refunded' ? x.balance : 0), 0);
       return `Total outstanding balance across active orders is <b>${D.RM(o)}</b>. The largest is the Langkap wedding (ORD-2604).`;
     }
-    if (/today|hari ini|schedule|jadual/.test(q))
-      return `Today you have <b>${D.schedule.length} scheduled tasks</b>. Next up: <b>set-up khemah & buffet</b> at Dewan Langkap (11:00 AM), then hidangan mempelai at 1:00 PM.`;
+    if (/today|hari ini|schedule|jadual/.test(q)) {
+      const todays = D.orders.filter(o => o.date === '2026-08-03' && o.status !== 'cancelled');
+      if (!todays.length) return `Nothing is scheduled for today. Check the Calendar page for your next confirmed events.`;
+      return `Today you have <b>${todays.length} event${todays.length > 1 ? 's' : ''}</b>: ${todays.map(o => '<b>' + esc(o.eventType) + '</b> (' + fmtTime(o.time) + ', ' + esc(o.venue) + ')').join(', ')}.`;
+    }
     if (/upcoming|next|akan datang|coming/.test(q)) {
       const up = D.orders.filter(o => o.date >= '2026-08-03' && o.status !== 'cancelled').sort((a, b) => a.date.localeCompare(b.date)).slice(0, 3);
       return `Your next events:<br>${up.map(o => '• <b>' + esc(o.eventType) + '</b> — ' + fmtDate(o.date) + ' (' + o.guests + ' pax)').join('<br>')}`;
@@ -743,12 +775,60 @@
     return h + '</div>';
   }
 
+  /* ---------- ACCESS REQUESTS (owner approves team members) ---------- */
+  function accessModal() {
+    if (!window.QAUTH) return;
+    const rank = { pending: 0, approved: 1, rejected: 2 };
+    function render(root) {
+      const users = QAUTH.all().slice().sort((a, b) => (rank[a.status] - rank[b.status]) || (b.createdAt - a.createdAt));
+      const badge = s => s === 'approved'
+        ? `<span class="badge-s b-confirmed"><i></i>${tf('Approved', 'Diluluskan')}</span>`
+        : s === 'pending'
+          ? `<span class="badge-s b-pending"><i></i>${tf('Pending', 'Menunggu')}</span>`
+          : `<span class="badge-s b-refunded"><i></i>${tf('Rejected', 'Ditolak')}</span>`;
+      const roleSel = u => `<select data-role="${u.id}" class="acc-role">${Object.keys(ROLES).map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${ROLES[r].label}</option>`).join('')}</select>`;
+      root.querySelector('#acc-list').innerHTML = users.map(u => {
+        const boss = (u.id === 'U-OWNER');
+        return `<div class="acc-row">
+          <div class="acc-top">
+            <span class="avatar" style="width:36px;height:36px;font-size:12px;border:1px solid var(--line)">${QAUTH.initials(u.name)}</span>
+            <div class="acc-id"><b>${esc(u.name)}</b><small>${esc(u.email)}${u.phone ? ' · ' + esc(u.phone) : ''}</small>${u.lastLogin ? `<small>${tf('Last login', 'Log masuk akhir')}: ${new Date(u.lastLogin).toLocaleString(getLang() === 'bm' ? 'ms-MY' : 'en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</small>` : ''}</div>
+            ${boss ? `<span class="badge-s b-confirmed"><i></i>${tf('Boss', 'Boss')}</span>` : badge(u.status)}
+          </div>
+          ${boss ? '' : `<div class="acc-ctrl">
+            ${roleSel(u)}
+            <div class="acc-btns">
+              ${u.status !== 'approved' ? `<button class="btn btn-sm btn-primary" data-act="approve" data-id="${u.id}">${tf('Approve', 'Lulus')}</button>` : ''}
+              ${u.status !== 'rejected' ? `<button class="btn btn-sm" data-act="reject" data-id="${u.id}">${tf('Reject', 'Tolak')}</button>` : ''}
+              <button class="btn btn-sm btn-danger" data-act="remove" data-id="${u.id}" title="${tf('Remove', 'Buang')}">✕</button>
+            </div>
+          </div>`}
+        </div>`;
+      }).join('') || `<div class="muted" style="font-size:12px">${tf('No users yet.', 'Tiada pengguna lagi.')}</div>`;
+      root.querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
+        const id = b.dataset.id, act = b.dataset.act;
+        const rsel = root.querySelector(`select[data-role="${id}"]`);
+        const rl = rsel ? rsel.value : undefined;
+        if (act === 'approve') { QAUTH.setStatus(id, 'approved', rl); toast(tf('Access approved', 'Akses diluluskan')); }
+        else if (act === 'reject') { QAUTH.setStatus(id, 'rejected'); toast(tf('Access rejected', 'Akses ditolak')); }
+        else if (act === 'remove') { if (!confirm(tf('Remove this user?', 'Buang pengguna ini?'))) return; QAUTH.remove(id); }
+        render(root);
+      });
+    }
+    openModal({
+      title: tf('Access requests', 'Permohonan akses'), subtitle: tf('Approve or reject team members', 'Lulus atau tolak ahli pasukan'),
+      width: '620px', body: `<div id="acc-list" class="acc-list"></div>`,
+      onMount(root) { render(root); }
+    });
+  }
+
   /* ---------- NEW BOOKING (admin manual key-in — full estimator) ---------- */
   function newBooking(prefill) {
     prefill = prefill || {};
     const pkgOpts = Object.keys(D.PACKAGES).map(n => { const p = D.PACKAGES[n]; return `<option value="${n}">${n} — ${D.RM(p.price)}${p.perPax ? '/pax' : '/set'}</option>`; }).join('');
     const evOpts = ['Majlis Perkahwinan', 'Majlis Pertunangan', 'Kenduri Kesyukuran', 'Aqiqah & Kesyukuran', 'Majlis Harijadi', 'Majlis Korporat', 'Jamuan / Event', 'Lain-lain'].map(e => `<option${prefill.eventType === e ? ' selected' : ''}>${e}</option>`).join('');
     const methodOpts = ['Bank Transfer', 'DuitNow QR', 'Tunai', 'Kad Kredit', '—'].map(m => `<option>${m}</option>`).join('');
+    const advOpts = (D.advisors || []).map(a => `<option value="${esc(a)}"></option>`).join('');
     const extras = [
       ...(D.canopy || []).map(x => ({ group: 'Kanopi & persediaan', name: x.name, price: x.price })),
       ...(D.addons || []).map(x => ({ group: 'Tambahan', name: x.name + (x.unit ? ' / ' + x.unit : ''), price: x.price })),
@@ -761,6 +841,13 @@
       <div class="form-row">
         <div class="form-field"><label>${tf('Email (optional)', 'Emel (pilihan)')}</label><input id="nb-email" value="${esc(prefill.email || '')}" placeholder="cth. nama@gmail.com"></div>
         <div class="form-field"><label>${tf('Event type', 'Jenis majlis')}</label><select id="nb-event">${evOpts}</select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>${tf('Sales advisor (who keyed-in)', 'Ejen jualan (yang key-in)')}</label><input id="nb-advisor" list="nb-advisor-list" value="${esc(prefill.advisor || '')}" placeholder="${tf('e.g. Aliff Aziz', 'cth. Aliff Aziz')}"><datalist id="nb-advisor-list">${advOpts}</datalist></div>
+        <div class="form-field"><label>${tf('Order type', 'Jenis tempahan')}</label><select id="nb-fulfil">
+          <option value="delivery">${tf('Delivery & full setup', 'Hantar & pasang lengkap')}</option>
+          <option value="pickup">${tf('Self-pickup (food only)', 'Ambil sendiri (makanan sahaja)')}</option>
+        </select></div>
       </div>
       <div class="form-row keep2">
         <div class="form-field"><label>${tf('Event date', 'Tarikh majlis')}</label><input id="nb-date" type="date" value="${prefill.date || ''}"></div>
@@ -780,9 +867,12 @@
         <div id="nb-cart" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
       </div></div>
 
-      <div class="form-row one"><div class="form-field">
-        <label>${tf('Add-ons & canopy', 'Tambahan & kanopi')}</label>
-        <div id="nb-extras" style="max-height:200px;overflow:auto;border:1px solid var(--line);border-radius:12px"></div>
+      <div class="form-row one" id="nb-extras-row"><div class="form-field">
+        <label>${tf('Add-ons & canopy', 'Tambahan & kanopi')} <span class="muted" style="font-weight:400;font-size:10.5px">${tf('· tick, then set quantity', '· tanda, kemudian set kuantiti')}</span></label>
+        <div id="nb-extras" style="max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:12px"></div>
+      </div></div>
+      <div class="form-row one" id="nb-pickup-note" style="display:none"><div class="form-field">
+        <div class="muted" style="font-size:11.5px;background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:10px 12px">${tf('Self-pickup order — food only, no canopy/setup or delivery. Customer collects at the kitchen.', 'Tempahan ambil sendiri — makanan sahaja, tanpa kanopi/pemasangan atau penghantaran. Pelanggan ambil di dapur.')}</div>
       </div></div>
 
       <div class="form-row keep2">
@@ -804,16 +894,35 @@
       onMount(root) {
         const q = s => root.querySelector(s);
         const cart = [];
-        const chosen = new Set();
+        const chosen = new Map(); // extra index -> quantity (sets/units)
 
         function renderExtras() {
-          q('#nb-extras').innerHTML = extras.map((x, i) => `
-            <label style="display:flex;align-items:center;gap:10px;padding:8px 11px;font-size:12.5px;cursor:pointer;border-bottom:1px solid var(--line)">
-              <input type="checkbox" data-i="${i}" ${chosen.has(i) ? 'checked' : ''} style="width:16px;height:16px;flex:none">
-              <span style="flex:1">${esc(x.name)}<span class="muted" style="font-size:10px;display:block">${x.group}</span></span>
-              <b style="white-space:nowrap">+ ${D.RM(x.price)}</b>
-            </label>`).join('');
-          q('#nb-extras').querySelectorAll('input[type=checkbox]').forEach(cb => cb.onchange = () => { const i = +cb.dataset.i; cb.checked ? chosen.add(i) : chosen.delete(i); calc(); });
+          q('#nb-extras').innerHTML = extras.map((x, i) => {
+            const on = chosen.has(i); const qty = chosen.get(i) || 1;
+            return `
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 11px;font-size:12.5px;border-bottom:1px solid var(--line)">
+              <input type="checkbox" data-i="${i}" ${on ? 'checked' : ''} style="width:16px;height:16px;flex:none;cursor:pointer">
+              <span style="flex:1">${esc(x.name)}<span class="muted" style="font-size:10px;display:block">${x.group} · ${D.RM(x.price)}</span></span>
+              <input type="number" min="1" value="${qty}" data-q="${i}" aria-label="qty" style="width:52px;text-align:right;padding:5px 7px;${on ? '' : 'visibility:hidden'}">
+              <b data-l="${i}" style="white-space:nowrap;min-width:66px;text-align:right">+ ${D.RM(x.price * qty)}</b>
+            </div>`;
+          }).join('');
+          q('#nb-extras').querySelectorAll('input[type=checkbox]').forEach(cb => cb.onchange = () => {
+            const i = +cb.dataset.i;
+            if (cb.checked) chosen.set(i, chosen.get(i) || 1); else chosen.delete(i);
+            renderExtras(); calc();
+          });
+          q('#nb-extras').querySelectorAll('input[data-q]').forEach(qi => qi.oninput = () => {
+            const i = +qi.dataset.q; const v = Math.max(1, parseInt(qi.value || '1', 10));
+            if (chosen.has(i)) { chosen.set(i, v); const lb = q('#nb-extras b[data-l="' + i + '"]'); if (lb) lb.textContent = '+ ' + D.RM(extras[i].price * v); calc(); }
+          });
+        }
+        function applyFulfil() {
+          const pickup = q('#nb-fulfil').value === 'pickup';
+          q('#nb-extras-row').style.display = pickup ? 'none' : '';
+          q('#nb-pickup-note').style.display = pickup ? '' : 'none';
+          if (pickup && chosen.size) { chosen.clear(); renderExtras(); }
+          calc();
         }
         function renderCart() {
           if (!cart.length) { q('#nb-cart').innerHTML = `<div class="muted" style="font-size:11.5px">${tf('No package added yet.', 'Belum ada pakej ditambah.')}</div>`; return; }
@@ -827,7 +936,7 @@
         }
         function calc() {
           let base = 0; cart.forEach(c => base += D.PACKAGES[c.name].price * c.qty);
-          let add = 0; chosen.forEach(i => add += extras[i].price);
+          let add = 0; chosen.forEach((qty, i) => add += extras[i].price * qty);
           const total = base + add;
           const dep = Math.max(0, parseInt(q('#nb-deposit').value || '0', 10));
           q('#nb-base').textContent = D.RM(base);
@@ -847,7 +956,8 @@
         };
         q('#nb-deposit').addEventListener('input', calc);
 
-        updHint(); renderExtras(); renderCart(); calc();
+        q('#nb-fulfil').onchange = applyFulfil;
+        updHint(); renderExtras(); renderCart(); applyFulfil(); calc();
         q('#nb-cancel').onclick = closeModal;
         q('#nb-save').onclick = () => {
           const name = q('#nb-name').value.trim(), phone = q('#nb-phone').value.trim();
@@ -858,7 +968,10 @@
           if (!guests) guests = cart[0].qty;
           const primary = cart[0].name;
           const extraPkgs = cart.slice(1).map(c => c.name + ' (' + c.qty + ' ' + (D.PACKAGES[c.name].perPax ? 'pax' : 'set') + ')');
-          const chosenNames = [...chosen].map(i => extras[i].name);
+          const advisor = q('#nb-advisor').value.trim() || '—';
+          const fulfilment = q('#nb-fulfil').value;
+          const addOnItems = [...chosen.entries()].map(([i, qty]) => ({ name: extras[i].name, qty, price: extras[i].price }));
+          const chosenNames = addOnItems.map(a => (a.qty > 1 ? a.qty + '× ' : '') + a.name);
           const date = q('#nb-date').value || new Date().toISOString().slice(0, 10);
           const initials = (name.split(/\s+/).map(w => w[0]).join('') || 'NA').slice(0, 2).toUpperCase();
           const stamp = Date.now().toString();
@@ -866,11 +979,13 @@
           const order = {
             id: 'ORD-' + stamp.slice(-5), invoice: 'INV-' + new Date().getFullYear() + '-' + stamp.slice(-4),
             customerId: 'WI-' + stamp.slice(-4), customer: name, initials, phone, email: q('#nb-email').value.trim() || '—',
-            eventType: q('#nb-event').value, pkg: primary,
-            venue: venue || '—', address: addr || '—', mapQuery: addr || venue || 'Langkap Perak',
+            eventType: q('#nb-event').value, pkg: primary, advisor, fulfilment,
+            venue: venue || (fulfilment === 'pickup' ? tf('Self-pickup', 'Ambil sendiri') : '—'),
+            address: addr || (fulfilment === 'pickup' ? tf('Collect at kitchen', 'Ambil di dapur') : '—'),
+            mapQuery: addr || venue || 'Langkap Perak',
             date, time: q('#nb-time').value || '11:00', endTime: '16:00', guests,
             services: { decoration: '—', canopy: '—', tables: 0, chairs: 0, waiters: 0, kitchen: 0 },
-            addOns: [...extraPkgs, ...chosenNames], total, deposit: dep, method: q('#nb-method').value,
+            addOns: [...extraPkgs, ...chosenNames], addOnItems, total, deposit: dep, method: q('#nb-method').value,
             status: dep > 0 ? 'confirmed' : 'pending',
             payStatus: (dep >= total && total > 0) ? 'paid' : dep > 0 ? 'partial' : 'unpaid',
             notes: q('#nb-notes').value.trim() || tf('Booking recorded manually by admin.', 'Tempahan direkod secara manual oleh admin.'),

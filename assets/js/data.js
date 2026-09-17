@@ -99,6 +99,9 @@
     { name: 'Sewaan Dome Set', price: 60, unit: 'set', note: 'Untuk sekali hidangan.' },
   ];
 
+  // ---- sales advisors (EJEN) — who keyed-in / handled the booking ----
+  const advisors = ['Aliff Aziz', 'Diyana', 'Eva', 'Ros', 'Bintang', 'Anje', 'D\'Nar'];
+
   // ---- key terms & conditions ----
   const terms = [
     'Bayaran deposit diperlukan untuk mengunci (lock) tarikh majlis — dikira berasingan mengikut kategori.',
@@ -316,6 +319,7 @@
       pkg: o.pkg, guests: o.guests, unit,
       issued: (o.timeline[0] && o.timeline[0][1]) || '—', due: o.date, eventDate: o.date,
       total: o.total, deposit: o.deposit, balance: o.balance, status: st,
+      advisor: o.advisor || null, fulfilment: o.fulfilment || 'delivery', addOnItems: o.addOnItems || null,
     };
   });
 
@@ -475,7 +479,7 @@
   };
 
   global.DEMO = {
-    RM, RMk, BRAND, USER, CLR, PACKAGES, MENUS, deposits, canopy, addons, terms,
+    RM, RMk, BRAND, USER, CLR, PACKAGES, MENUS, deposits, canopy, addons, advisors, terms,
     orders, customers, invoices, payments, staff, charts, notifs, schedule, reviews, billing, inventory, bom, bomBase,
     getStockItem: id => inventory.find(i => i.id === id),
     addBooking: (o) => {

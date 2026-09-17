@@ -490,6 +490,25 @@ tbody tr:last-child td{border-bottom:none}
 .pay-row.total{border-top:1px dashed var(--line-2);margin-top:6px;padding-top:10px;font-weight:700;font-size:14px}
 .pay-row .muted{color:var(--mist)}
 
+/* ---- sidebar auth actions ---- */
+.side-auth{display:flex;gap:8px;margin-top:10px}
+.side-auth .btn{flex:1;justify-content:center;position:relative}
+.side-auth .btn .badge{background:var(--red);color:#fff;border-radius:9px;padding:0 6px;font-size:10px;line-height:16px;margin-left:5px}
+
+/* ---- access requests modal ---- */
+.acc-list{display:flex;flex-direction:column;gap:10px}
+.acc-row{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.acc-top{display:flex;align-items:center;gap:10px}
+.acc-id{flex:1;min-width:0}
+.acc-id b{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acc-id small{font-size:11px;color:var(--mist);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acc-top .badge-s{flex:none}
+.acc-ctrl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-left:46px}
+.acc-ctrl .acc-role{flex:1;min-width:140px}
+.acc-role{padding:7px 9px;border:1px solid var(--line);border-radius:9px;font-family:inherit;font-size:12px;background:var(--bg-soft);color:var(--ink)}
+.acc-btns{display:flex;gap:6px;flex:none}
+@media(max-width:560px){.acc-ctrl{padding-left:0}}
+
 /* ============ MODAL ============ */
 .modal-wrap{position:fixed;inset:0;display:grid;place-items:center;z-index:110;padding:24px;opacity:0;transition:opacity .24s var(--ease);pointer-events:none}
 .modal-wrap.show{opacity:1;pointer-events:auto}

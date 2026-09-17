@@ -156,11 +156,6 @@
     });
   }
 
-  /* today schedule */
-  D.schedule.forEach(it => $('#timeline').appendChild(el('div', 'tl-item ' + it.st, `
-    <div class="time">${it.t}<span>${it.ap}</span></div>
-    <div class="track"><span class="node"></span><b>${it.b}</b><small>${it.s}</small></div>`)));
-
   /* upcoming */
   (function upcoming() {
     const host = $('#upcoming');

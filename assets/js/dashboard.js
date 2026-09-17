@@ -141,14 +141,6 @@
     for (let i = 1; i <= trail; i++) grid.appendChild(el('div', 'cal-cell out', `<span class="d">${i}</span>`));
   }
 
-  /* timeline */
-  function renderTimeline() {
-    const t = $('#timeline');
-    D.schedule.forEach(it => t.appendChild(el('div', 'tl-item ' + it.st, `
-      <div class="time">${it.t}<span>${it.ap}</span></div>
-      <div class="track"><span class="node"></span><b>${it.b}</b><small>${it.s}</small></div>`)));
-  }
-
   /* recent orders (clickable) */
   function renderOrders() {
     const b = $('#orders-body');
@@ -368,7 +360,7 @@
     }));
   }
 
-  renderKPI(); renderActionCenter(); renderInsights(); renderCharts(); renderCal(); renderTimeline(); renderOrders();
+  renderKPI(); renderActionCenter(); renderInsights(); renderCharts(); renderCal(); renderOrders();
   renderInvoices(); renderTopCust(); renderNotifs(); renderQA();
   wireSalesToggle(); S.countUp(); fillBars();
 })();

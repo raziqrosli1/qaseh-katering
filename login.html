@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log masuk — Qaseh Katering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+<style>
+  body{min-height:100vh;display:grid;place-items:center;padding:24px;
+    background:radial-gradient(1200px 600px at 15% -10%,#1a1a1a 0%,#0c0c0c 55%,#080808 100%);}
+  .auth-wrap{width:min(420px,100%)}
+  .auth-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6);padding:34px 30px}
+  .auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+  .auth-logo .mk{width:44px;height:44px;border-radius:13px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;font-size:19px}
+  .auth-logo b{font-size:17px;font-weight:600;display:block;line-height:1.1}
+  .auth-logo small{font-size:11px;color:var(--mist)}
+  .auth-card h1{font-size:21px;font-weight:600;letter-spacing:-.02em;margin:2px 0 4px}
+  .auth-card .sub{font-size:12.5px;color:var(--mist);margin-bottom:22px}
+  .auth-field{margin-bottom:14px}
+  .auth-field label{display:block;font-size:11.5px;font-weight:600;color:var(--graphite);margin-bottom:6px}
+  .auth-field input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;font-family:inherit;font-size:13.5px;background:var(--bg-soft);color:var(--ink)}
+  .auth-field input:focus{outline:none;border-color:var(--ink);background:var(--panel)}
+  .pw-wrap{position:relative}
+  .pw-wrap input{padding-right:44px}
+  .pw-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;display:grid;place-items:center;border:none;background:none;cursor:pointer;color:var(--mist);border-radius:8px}
+  .pw-toggle:hover{color:var(--ink);background:var(--bg-soft)}
+  .pw-toggle svg{width:18px;height:18px}
+  .auth-opts{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;font-size:12px}
+  .auth-opts label{display:flex;align-items:center;gap:7px;color:var(--graphite);cursor:pointer;user-select:none}
+  .auth-opts input{width:15px;height:15px;accent-color:var(--ink)}
+  .auth-opts a{color:var(--ink);font-weight:600;text-decoration:none;background:none;border:none;cursor:pointer;font-family:inherit;font-size:12px}
+  .auth-msg{font-size:12px;border-radius:10px;padding:10px 12px;margin-bottom:14px;display:none;line-height:1.55}
+  .auth-msg.err{display:block;background:#fdecec;color:#a01818;border:1px solid #f5c6c6}
+  .auth-msg.warn{display:block;background:#fff6e5;color:#8a5a00;border:1px solid #f2d79a}
+  .auth-msg.ok{display:block;background:#e9f7ee;color:#1a6b37;border:1px solid #bfe6cd}
+  .btn[disabled]{opacity:.65;cursor:default}
+  .auth-foot{margin-top:18px;text-align:center;font-size:12.5px;color:var(--mist)}
+  .auth-foot a{color:var(--ink);font-weight:600;text-decoration:none}
+  .demo-hint{margin-top:16px;font-size:11px;color:var(--mist);background:var(--bg-soft);border:1px dashed var(--line-2,#e3e3e3);border-radius:10px;padding:10px 12px;line-height:1.6}
+  .demo-hint b{color:var(--ink)}
+  .back-site{position:fixed;top:18px;left:20px;color:#cfcfcf;font-size:12.5px;text-decoration:none}
+  .back-site:hover{color:#fff}
+</style>
+</head>
+<body>
+<a class="back-site" href="index.html">← <span data-en="Public website" data-bm="Laman web">Public website</span></a>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo"><span class="mk">Q</span><div><b>Qaseh Katering</b><small>Operations System · 2026</small></div></div>
+
+    <div class="auth-msg" id="msg"></div>
+
+    <!-- LOGIN VIEW -->
+    <div id="view-login">
+      <h1 data-en="Welcome back" data-bm="Selamat kembali">Welcome back</h1>
+      <div class="sub" data-en="Sign in to the operations dashboard." data-bm="Log masuk ke dashboard operasi.">Sign in to the operations dashboard.</div>
+      <form id="login-form" autocomplete="on">
+        <div class="auth-field">
+          <label for="email" data-en="Email" data-bm="Emel">Email</label>
+          <input id="email" type="email" required placeholder="cth. boss@qaseh.com" autocomplete="username">
+        </div>
+        <div class="auth-field">
+          <label for="password" data-en="Password" data-bm="Kata laluan">Password</label>
+          <div class="pw-wrap">
+            <input id="password" type="password" required placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="pw-toggle" data-toggle="password" aria-label="Show password"></button>
+          </div>
+        </div>
+        <div class="auth-opts">
+          <label><input type="checkbox" id="remember" checked> <span data-en="Remember me" data-bm="Ingat saya">Remember me</span></label>
+          <button type="button" id="forgot-link" data-en="Forgot password?" data-bm="Lupa kata laluan?">Forgot password?</button>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="login-btn" data-en="Log in" data-bm="Log masuk">Log in</button>
+      </form>
+      <div class="auth-foot">
+        <span data-en="No account yet?" data-bm="Belum ada akaun?">No account yet?</span>
+        <a href="register.html" data-en="Request access" data-bm="Mohon akses">Request access</a>
+      </div>
+      <div class="demo-hint">
+        <b data-en="Demo boss login" data-bm="Log masuk boss (demo)">Demo boss login</b><br>
+        Email: <b>boss@qaseh.com</b> · <span data-en="Password" data-bm="Kata laluan">Password</span>: <b>admin123</b>
+      </div>
+    </div>
+
+    <!-- RESET VIEW -->
+    <div id="view-reset" style="display:none">
+      <h1 data-en="Reset password" data-bm="Set semula kata laluan">Reset password</h1>
+      <div class="sub" data-en="Enter your email and a new password." data-bm="Masukkan emel dan kata laluan baharu.">Enter your email and a new password.</div>
+      <form id="reset-form">
+        <div class="auth-field">
+          <label for="r-email" data-en="Email" data-bm="Emel">Email</label>
+          <input id="r-email" type="email" required placeholder="cth. boss@qaseh.com">
+        </div>
+        <div class="auth-field">
+          <label for="r-pass" data-en="New password" data-bm="Kata laluan baharu">New password</label>
+          <div class="pw-wrap">
+            <input id="r-pass" type="password" required placeholder="••••••••" minlength="6">
+            <button type="button" class="pw-toggle" data-toggle="r-pass" aria-label="Show password"></button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" data-en="Update password" data-bm="Kemas kini kata laluan">Update password</button>
+      </form>
+      <div class="auth-foot">
+        <button type="button" id="back-login" style="background:none;border:none;cursor:pointer;font-family:inherit;color:var(--ink);font-weight:600;font-size:12.5px" data-en="← Back to login" data-bm="← Kembali ke log masuk">← Back to login</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/auth.js"></script>
+<script>
+  (function () {
+    var bm = false;
+    try { bm = localStorage.getItem('qaseh_lang') === 'bm'; } catch (e) {}
+    if (bm) document.querySelectorAll('[data-bm]').forEach(function (n) { n.textContent = n.getAttribute('data-bm'); });
+
+    if (window.QAUTH && QAUTH.current()) { location.replace('dashboard.html'); return; }
+
+    var eyeOpen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var eyeOff = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 7 10 7a13.2 13.2 0 0 1-1.67 2.68M6.6 6.6A13.3 13.3 0 0 0 2 11s3.5 7 10 7a9 9 0 0 0 5.4-1.6M3 3l18 18"/></svg>';
+    document.querySelectorAll('.pw-toggle').forEach(function (btn) {
+      btn.innerHTML = eyeOpen;
+      btn.addEventListener('click', function () {
+        var input = document.getElementById(btn.getAttribute('data-toggle'));
+        if (!input) return;
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.innerHTML = show ? eyeOff : eyeOpen;
+      });
+    });
+
+    var msg = document.getElementById('msg');
+    function show(type, text) { msg.className = 'auth-msg ' + type; msg.innerHTML = text; }
+    function clearMsg() { msg.className = 'auth-msg'; msg.textContent = ''; }
+
+    var T = {
+      invalid: bm ? 'Emel atau kata laluan salah.' : 'Wrong email or password.',
+      pending: bm ? 'Akaun anda masih menunggu kelulusan boss.' : 'Your account is still awaiting boss approval.',
+      rejected: bm ? 'Permohonan akaun anda telah ditolak.' : 'Your account request was rejected.',
+      notfound: bm ? 'Tiada akaun dengan emel itu.' : 'No account with that email.',
+      reset: bm ? 'Kata laluan dikemas kini. Sila log masuk.' : 'Password updated. Please log in.',
+    };
+
+    // login
+    var loginBtn = document.getElementById('login-btn');
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      clearMsg();
+      var email = document.getElementById('email').value.trim();
+      var pass = document.getElementById('password').value;
+      var remember = document.getElementById('remember').checked;
+      // brief loading state so it feels real
+      loginBtn.disabled = true;
+      loginBtn.textContent = bm ? 'Sedang log masuk…' : 'Signing in…';
+      setTimeout(function () {
+        var res = QAUTH.login(email, pass, remember);
+        if (res.ok) { location.replace('dashboard.html'); return; }
+        loginBtn.disabled = false;
+        loginBtn.textContent = bm ? 'Log masuk' : 'Log in';
+        show(res.reason === 'pending' ? 'warn' : 'err', T[res.reason] || T.invalid);
+      }, 550);
+    });
+
+    // forgot / reset toggling
+    var vLogin = document.getElementById('view-login');
+    var vReset = document.getElementById('view-reset');
+    document.getElementById('forgot-link').addEventListener('click', function () { clearMsg(); vLogin.style.display = 'none'; vReset.style.display = ''; });
+    document.getElementById('back-login').addEventListener('click', function () { clearMsg(); vReset.style.display = 'none'; vLogin.style.display = ''; });
+
+    document.getElementById('reset-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = document.getElementById('r-email').value.trim();
+      var np = document.getElementById('r-pass').value;
+      if (np.length < 6) { show('err', bm ? 'Kata laluan mesti sekurang-kurangnya 6 aksara.' : 'Password must be at least 6 characters.'); return; }
+      var res = QAUTH.resetPassword(email, np);
+      if (!res.ok) { show('err', T.notfound); return; }
+      vReset.style.display = 'none'; vLogin.style.display = '';
+      document.getElementById('email').value = email;
+      show('ok', T.reset);
+    });
+  })();
+</script>
+</body>
+</html>

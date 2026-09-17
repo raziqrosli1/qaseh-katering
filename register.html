@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mohon akses — Qaseh Katering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+<style>
+  body{min-height:100vh;display:grid;place-items:center;padding:24px;
+    background:radial-gradient(1200px 600px at 15% -10%,#1a1a1a 0%,#0c0c0c 55%,#080808 100%);}
+  .auth-wrap{width:min(440px,100%)}
+  .auth-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6);padding:34px 30px}
+  .auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+  .auth-logo .mk{width:44px;height:44px;border-radius:13px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;font-size:19px}
+  .auth-logo b{font-size:17px;font-weight:600;display:block;line-height:1.1}
+  .auth-logo small{font-size:11px;color:var(--mist)}
+  .auth-card h1{font-size:21px;font-weight:600;letter-spacing:-.02em;margin:2px 0 4px}
+  .auth-card .sub{font-size:12.5px;color:var(--mist);margin-bottom:20px}
+  .auth-field{margin-bottom:13px}
+  .auth-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .auth-field label{display:block;font-size:11.5px;font-weight:600;color:var(--graphite);margin-bottom:6px}
+  .auth-field input,.auth-field select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;font-family:inherit;font-size:13.5px;background:var(--bg-soft);color:var(--ink)}
+  .auth-field input:focus,.auth-field select:focus{outline:none;border-color:var(--ink);background:var(--panel)}
+  .pw-wrap{position:relative}
+  .pw-wrap input{padding-right:44px}
+  .pw-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;display:grid;place-items:center;border:none;background:none;cursor:pointer;color:var(--mist);border-radius:8px}
+  .pw-toggle:hover{color:var(--ink);background:var(--bg-soft)}
+  .pw-toggle svg{width:18px;height:18px}
+  .pw-hint{font-size:10.5px;color:var(--mist);margin-top:5px}
+  .terms{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--graphite);margin:4px 0 16px;line-height:1.5;cursor:pointer;user-select:none}
+  .terms input{width:15px;height:15px;margin-top:1px;flex:none;accent-color:var(--ink)}
+  .auth-msg{font-size:12px;border-radius:10px;padding:11px 13px;margin-bottom:14px;display:none;line-height:1.55}
+  .auth-msg.err{display:block;background:#fdecec;color:#a01818;border:1px solid #f5c6c6}
+  .auth-msg.ok{display:block;background:#e9f7ee;color:#1a6b37;border:1px solid #bfe6cd}
+  .auth-foot{margin-top:18px;text-align:center;font-size:12.5px;color:var(--mist)}
+  .auth-foot a{color:var(--ink);font-weight:600;text-decoration:none}
+  .note{margin-top:14px;font-size:11px;color:var(--mist);background:var(--bg-soft);border:1px dashed var(--line-2,#e3e3e3);border-radius:10px;padding:10px 12px;line-height:1.6}
+  .back-site{position:fixed;top:18px;left:20px;color:#cfcfcf;font-size:12.5px;text-decoration:none}
+  .back-site:hover{color:#fff}
+  @media(max-width:480px){.auth-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<a class="back-site" href="login.html">← <span data-en="Back to login" data-bm="Kembali ke log masuk">Back to login</span></a>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo"><span class="mk">Q</span><div><b>Qaseh Katering</b><small>Operations System · 2026</small></div></div>
+    <h1 data-en="Request access" data-bm="Mohon akses">Request access</h1>
+    <div class="sub" data-en="Submit your details. The owner will review and approve your account." data-bm="Hantar butiran anda. Pemilik akan semak dan luluskan akaun.">Submit your details. The owner will review and approve your account.</div>
+
+    <div class="auth-msg" id="msg"></div>
+
+    <form id="reg-form">
+      <div class="auth-field">
+        <label for="name" data-en="Full name" data-bm="Nama penuh">Full name</label>
+        <input id="name" required placeholder="cth. Aliff Aziz">
+      </div>
+      <div class="auth-row">
+        <div class="auth-field">
+          <label for="email" data-en="Email" data-bm="Emel">Email</label>
+          <input id="email" type="email" required placeholder="cth. nama@qaseh.com">
+        </div>
+        <div class="auth-field">
+          <label for="phone" data-en="Phone" data-bm="Telefon">Phone</label>
+          <input id="phone" placeholder="cth. 012-345 6789">
+        </div>
+      </div>
+      <div class="auth-field">
+        <label for="role" data-en="Requested role" data-bm="Peranan dipohon">Requested role</label>
+        <select id="role"></select>
+      </div>
+      <div class="auth-row">
+        <div class="auth-field">
+          <label for="password" data-en="Password" data-bm="Kata laluan">Password</label>
+          <div class="pw-wrap">
+            <input id="password" type="password" required placeholder="••••••••" minlength="6">
+            <button type="button" class="pw-toggle" data-toggle="password" aria-label="Show password"></button>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label for="confirm" data-en="Confirm password" data-bm="Sahkan kata laluan">Confirm password</label>
+          <div class="pw-wrap">
+            <input id="confirm" type="password" required placeholder="••••••••" minlength="6">
+            <button type="button" class="pw-toggle" data-toggle="confirm" aria-label="Show password"></button>
+          </div>
+        </div>
+      </div>
+      <div class="pw-hint" data-en="Password must be at least 6 characters." data-bm="Kata laluan mesti sekurang-kurangnya 6 aksara.">Password must be at least 6 characters.</div>
+      <label class="terms"><input type="checkbox" id="agree"> <span data-en="I confirm my details are correct and agree to the company's system usage terms." data-bm="Saya sahkan butiran ini betul dan bersetuju dengan terma penggunaan sistem syarikat.">I confirm my details are correct and agree to the company's system usage terms.</span></label>
+      <button type="submit" class="btn btn-primary btn-block" data-en="Submit request" data-bm="Hantar permohonan">Submit request</button>
+    </form>
+
+    <div class="auth-foot">
+      <span data-en="Already approved?" data-bm="Sudah diluluskan?">Already approved?</span>
+      <a href="login.html" data-en="Log in" data-bm="Log masuk">Log in</a>
+    </div>
+
+    <div class="note" data-en="Access is granted by the owner (boss). You won't be able to log in until your request is approved." data-bm="Akses diberi oleh pemilik (boss). Anda tidak boleh log masuk sehingga permohonan diluluskan.">Access is granted by the owner (boss). You won't be able to log in until your request is approved.</div>
+  </div>
+</div>
+
+<script src="assets/js/auth.js"></script>
+<script>
+  (function () {
+    var bm = false;
+    try { bm = localStorage.getItem('qaseh_lang') === 'bm'; } catch (e) {}
+    if (bm) document.querySelectorAll('[data-bm]').forEach(function (n) { n.textContent = n.getAttribute('data-bm'); });
+
+    // role options
+    var sel = document.getElementById('role');
+    QAUTH.REQUESTABLE.forEach(function (r) {
+      var o = document.createElement('option');
+      o.value = r; o.textContent = QAUTH.ROLE_LABELS[r];
+      sel.appendChild(o);
+    });
+    sel.value = 'staff';
+
+    // password show/hide
+    var eyeOpen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var eyeOff = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 7 10 7a13.2 13.2 0 0 1-1.67 2.68M6.6 6.6A13.3 13.3 0 0 0 2 11s3.5 7 10 7a9 9 0 0 0 5.4-1.6M3 3l18 18"/></svg>';
+    document.querySelectorAll('.pw-toggle').forEach(function (btn) {
+      btn.innerHTML = eyeOpen;
+      btn.addEventListener('click', function () {
+        var input = document.getElementById(btn.getAttribute('data-toggle'));
+        if (!input) return;
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.innerHTML = show ? eyeOff : eyeOpen;
+      });
+    });
+
+    var msg = document.getElementById('msg');
+    var form = document.getElementById('reg-form');
+    function show(type, text) { msg.className = 'auth-msg ' + type; msg.innerHTML = text; }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = document.getElementById('name').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var pass = document.getElementById('password').value;
+      var confirm = document.getElementById('confirm').value;
+      var agree = document.getElementById('agree').checked;
+      if (!name || !email || !pass) { show('err', bm ? 'Sila lengkapkan nama, emel & kata laluan.' : 'Please fill name, email & password.'); return; }
+      if (pass.length < 6) { show('err', bm ? 'Kata laluan mesti sekurang-kurangnya 6 aksara.' : 'Password must be at least 6 characters.'); return; }
+      if (pass !== confirm) { show('err', bm ? 'Kata laluan tidak sepadan.' : 'Passwords do not match.'); return; }
+      if (!agree) { show('err', bm ? 'Sila tanda kotak persetujuan.' : 'Please tick the agreement box.'); return; }
+
+      var res = QAUTH.register({ name: name, email: email, phone: document.getElementById('phone').value, password: pass, role: sel.value });
+      if (!res.ok) { show('err', bm ? 'Emel ini sudah didaftarkan. Sila log masuk.' : 'This email is already registered. Please log in.'); return; }
+      form.style.display = 'none';
+      show('ok', (bm
+        ? '<b>Permohonan dihantar!</b><br>Akaun anda menunggu kelulusan boss besar. Anda akan boleh log masuk setelah diluluskan.'
+        : '<b>Request submitted!</b><br>Your account is awaiting the boss\'s approval. You can log in once it is approved.'));
+    });
+  })();
+</script>
+</body>
+</html>

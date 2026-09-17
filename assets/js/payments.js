@@ -71,7 +71,7 @@
         </div>
         <div class="doc-parties">
           <div class="p"><div class="st">${tf('Received From', 'Diterima Daripada')}</div><p><b>${S.esc(p.customer)}</b><br>${o ? S.esc(o.email) : ''}<br>${o ? S.esc(o.phone) : ''}</p></div>
-          <div class="p" style="text-align:right"><div class="st">${tf('Reference', 'Rujukan')}</div><p>${tf('Invoice', 'Invois')}: ${p.invoice}<br>${tf('Order', 'Tempahan')}: ${p.orderId}<br>${tf('Method', 'Kaedah')}: ${p.method}</p></div>
+          <div class="p" style="text-align:right"><div class="st">${tf('Reference', 'Rujukan')}</div><p>${tf('Invoice', 'Invois')}: ${p.invoice}<br>${tf('Order', 'Tempahan')}: ${p.orderId}<br>${tf('Method', 'Kaedah')}: ${p.method}${o && o.advisor && o.advisor !== '—' ? `<br>${tf('Advisor', 'Ejen')}: ${S.esc(o.advisor)}` : ''}${o && o.fulfilment === 'pickup' ? `<br>${tf('Self-pickup', 'Ambil sendiri')}` : ''}</p></div>
         </div>
         <table>
           <thead><tr><th>${tf('Description', 'Keterangan')}</th><th class="r">${tf('Amount', 'Jumlah')}</th></tr></thead>
