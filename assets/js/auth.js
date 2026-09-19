@@ -89,6 +89,25 @@
     return { ok: true, user: x };
   }
 
+  // update own profile (name / phone)
+  function updateProfile(id, patch) {
+    const u = all(); const x = u.find(y => y.id === id);
+    if (!x) return { ok: false, reason: 'notfound' };
+    if (patch.name != null) x.name = String(patch.name).trim();
+    if (patch.phone != null) x.phone = String(patch.phone).trim();
+    write(u);
+    return { ok: true, user: x };
+  }
+
+  // change own password (verifies current)
+  function changePassword(id, current, next) {
+    const u = all(); const x = u.find(y => y.id === id);
+    if (!x) return { ok: false, reason: 'notfound' };
+    if (x.password !== current) return { ok: false, reason: 'wrongpass' };
+    x.password = next; write(u);
+    return { ok: true, user: x };
+  }
+
   // approval controls (owner only, enforced by UI)
   function setStatus(id, status, role) {
     const u = all(); const x = u.find(y => y.id === id);
@@ -100,5 +119,5 @@
     return (String(name || '').split(/\s+/).map(w => w[0]).join('') || 'NA').slice(0, 2).toUpperCase();
   }
 
-  g.QAUTH = { ROLE_LABELS, REQUESTABLE, all, register, login, current, logout, resetPassword, setStatus, remove, findByEmail, seed, initials };
+  g.QAUTH = { ROLE_LABELS, REQUESTABLE, all, register, login, current, logout, resetPassword, updateProfile, changePassword, setStatus, remove, findByEmail, seed, initials };
 })(window);

@@ -76,10 +76,10 @@
 
   /* ---------- ROLES (access control) ---------- */
   const ROLES = {
-    owner:   { label: 'Owner / Admin', sales: true, pages: ['dashboard', 'orders', 'calendar', 'customers', 'invoices', 'payments', 'inventory', 'reports', 'settings'] },
-    manager: { label: 'Operations Manager', sales: true, pages: ['dashboard', 'orders', 'calendar', 'customers', 'invoices', 'payments', 'inventory', 'reports'] },
-    finance: { label: 'Finance', sales: true, pages: ['dashboard', 'invoices', 'payments', 'reports'] },
-    staff:   { label: 'Staff / Crew', sales: false, pages: ['calendar'] },
+    owner:   { label: 'Owner / Admin', sales: true, pages: ['dashboard', 'orders', 'calendar', 'customers', 'invoices', 'payments', 'inventory', 'reports', 'settings', 'profile'] },
+    manager: { label: 'Operations Manager', sales: true, pages: ['dashboard', 'orders', 'calendar', 'customers', 'invoices', 'payments', 'inventory', 'reports', 'profile'] },
+    finance: { label: 'Finance', sales: true, pages: ['dashboard', 'invoices', 'payments', 'reports', 'profile'] },
+    staff:   { label: 'Staff / Crew', sales: false, pages: ['calendar', 'profile'] },
   };
   const getRole = () => { try { return ROLES[localStorage.getItem('selera_role')] ? localStorage.getItem('selera_role') : 'owner'; } catch (e) { return 'owner'; } };
   const canSeeSales = () => (ROLES[getRole()] || ROLES.owner).sales !== false;
@@ -158,7 +158,7 @@
       const isOwner = cu ? cu.role === 'owner' : true;
       const pendingCount = window.QAUTH ? QAUTH.all().filter(u => u.status === 'pending').length : 0;
       html += `<div class="side-foot">
-        <a class="side-user" href="${roleDef.pages.includes('settings') ? 'settings.html' : 'dashboard.html'}"><span class="avatar">${uInit}</span><span class="meta"><b>${esc(uName)}</b><small>${roleDef.label}</small></span><span class="dot"></span></a>
+        <a class="side-user" href="profile.html" title="${tf('My profile', 'Profil saya')}"><span class="avatar">${uInit}</span><span class="meta"><b>${esc(uName)}</b><small>${roleDef.label}</small></span><span class="dot"></span></a>
         <div class="lang-switch"><span>${I18N.ui.language[L()]}</span><div class="lang-seg"><button type="button" data-lang="en" class="${getLang() === 'en' ? 'on' : ''}">EN</button><button type="button" data-lang="bm" class="${getLang() === 'bm' ? 'on' : ''}">BM</button></div></div>
         ${isOwner ? `<div class="role-switch"><span>${I18N.ui.viewAs[L()]}</span><select id="role-select">${Object.keys(ROLES).map(r => `<option value="${r}" ${r === role ? 'selected' : ''}>${ROLES[r].label}</option>`).join('')}</select></div>` : ''}
         <div class="side-auth">
@@ -221,12 +221,6 @@
     if (!$('#scrim')) document.body.appendChild(el('div', 'scrim')).id = 'scrim';
     if (!$('#drawer-root')) { const d = el('div', 'drawer'); d.id = 'drawer-root'; document.body.appendChild(d); }
     if (!$('#modal-root')) { const m = el('div', 'modal-wrap'); m.id = 'modal-root'; document.body.appendChild(m); }
-    if (!$('#ai-fab')) {
-      const fab = el('button', 'fab-ai'); fab.id = 'ai-fab';
-      fab.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none">${I.sparkle}</svg><span>${tf('Ask AI', 'Tanya AI')}</span>`;
-      fab.addEventListener('click', openAssistant);
-      document.body.appendChild(fab);
-    }
     localizeDom();
     ensureTip();
     $('#scrim').addEventListener('click', () => { closeDrawer(); closeModal(); closePalette(); closeMobileNav(); });
