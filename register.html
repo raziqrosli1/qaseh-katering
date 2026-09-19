@@ -9,28 +9,49 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/app.css">
 <style>
-  body{min-height:100vh;display:grid;place-items:center;padding:24px;
-    background:radial-gradient(1200px 600px at 15% -10%,#1a1a1a 0%,#0c0c0c 55%,#080808 100%);}
-  .auth-wrap{width:min(440px,100%)}
-  .auth-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6);padding:34px 30px}
-  .auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-  .auth-logo .mk{width:44px;height:44px;border-radius:13px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;font-size:19px}
-  .auth-logo b{font-size:17px;font-weight:600;display:block;line-height:1.1}
-  .auth-logo small{font-size:11px;color:var(--mist)}
-  .auth-card h1{font-size:21px;font-weight:600;letter-spacing:-.02em;margin:2px 0 4px}
-  .auth-card .sub{font-size:12.5px;color:var(--mist);margin-bottom:20px}
+  body{min-height:100vh}
+  .auth-split{display:grid;grid-template-columns:1.05fr .95fr;min-height:100vh}
+  .auth-brand{position:relative;overflow:hidden;color:#fff;padding:40px 46px;display:flex;flex-direction:column;justify-content:space-between;
+    background:radial-gradient(900px 500px at 12% -8%,#242424 0%,#141414 52%,#0b0b0b 100%)}
+  .auth-brand::after{content:"";position:absolute;width:460px;height:460px;right:-160px;bottom:-180px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.07),transparent 70%)}
+  .brand-back{position:relative;z-index:2;color:rgba(255,255,255,.7);font-size:12.5px;text-decoration:none;width:max-content}
+  .brand-back:hover{color:#fff}
+  .brand-logo{display:flex;align-items:center;gap:12px;position:relative;z-index:2}
+  .brand-logo .mk{width:46px;height:46px;border-radius:13px;background:#fff;color:#111;display:grid;place-items:center;font-weight:700;font-size:20px}
+  .brand-logo b{font-size:17px;font-weight:600;display:block;line-height:1.15}
+  .brand-logo small{font-size:11px;color:rgba(255,255,255,.6)}
+  .brand-mid{position:relative;z-index:2;max-width:420px}
+  .brand-mid h1{font-size:30px;line-height:1.22;font-weight:600;letter-spacing:-.02em;margin-bottom:26px}
+  .brand-feats{list-style:none;display:flex;flex-direction:column;gap:15px}
+  .brand-feats li{display:flex;align-items:center;gap:13px;font-size:13.5px;color:rgba(255,255,255,.85)}
+  .brand-feats .ic{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;flex:none}
+  .brand-feats svg{width:16px;height:16px;color:#fff}
+  .brand-foot{position:relative;z-index:2;font-size:11px;color:rgba(255,255,255,.5);line-height:1.6}
+
+  .auth-panel{display:grid;place-items:center;padding:40px 24px;background:var(--bg)}
+  .auth-card{width:min(430px,100%)}
+  .auth-mobile-logo{display:none;align-items:center;justify-content:space-between;margin-bottom:24px}
+  .auth-mobile-logo .l{display:flex;align-items:center;gap:10px}
+  .auth-mobile-logo .mk{width:38px;height:38px;border-radius:11px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;font-size:16px}
+  .auth-mobile-logo b{font-size:14px;font-weight:600;display:block;line-height:1}
+  .auth-mobile-logo small{font-size:10px;color:var(--mist)}
+  .auth-mobile-logo a{font-size:12px;color:var(--mist);text-decoration:none}
+
+  .auth-card h1{font-size:23px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px}
+  .auth-card .sub{font-size:12.5px;color:var(--mist);margin-bottom:22px}
   .auth-field{margin-bottom:13px}
   .auth-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .auth-field label{display:block;font-size:11.5px;font-weight:600;color:var(--graphite);margin-bottom:6px}
-  .auth-field input,.auth-field select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;font-family:inherit;font-size:13.5px;background:var(--bg-soft);color:var(--ink)}
-  .auth-field input:focus,.auth-field select:focus{outline:none;border-color:var(--ink);background:var(--panel)}
+  .auth-field input,.auth-field select{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:11px;font-family:inherit;font-size:13.5px;background:var(--panel);color:var(--ink);transition:border-color .16s,box-shadow .16s}
+  .auth-field input:focus,.auth-field select:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(10,10,10,.05)}
   .pw-wrap{position:relative}
   .pw-wrap input{padding-right:44px}
   .pw-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;display:grid;place-items:center;border:none;background:none;cursor:pointer;color:var(--mist);border-radius:8px}
   .pw-toggle:hover{color:var(--ink);background:var(--bg-soft)}
   .pw-toggle svg{width:18px;height:18px}
   .pw-hint{font-size:10.5px;color:var(--mist);margin-top:5px}
-  .terms{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--graphite);margin:4px 0 16px;line-height:1.5;cursor:pointer;user-select:none}
+  .terms{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--graphite);margin:6px 0 16px;line-height:1.5;cursor:pointer;user-select:none}
   .terms input{width:15px;height:15px;margin-top:1px;flex:none;accent-color:var(--ink)}
   .auth-msg{font-size:12px;border-radius:10px;padding:11px 13px;margin-bottom:14px;display:none;line-height:1.55}
   .auth-msg.err{display:block;background:#fdecec;color:#a01818;border:1px solid #f5c6c6}
@@ -38,68 +59,91 @@
   .auth-foot{margin-top:18px;text-align:center;font-size:12.5px;color:var(--mist)}
   .auth-foot a{color:var(--ink);font-weight:600;text-decoration:none}
   .note{margin-top:14px;font-size:11px;color:var(--mist);background:var(--bg-soft);border:1px dashed var(--line-2,#e3e3e3);border-radius:10px;padding:10px 12px;line-height:1.6}
-  .back-site{position:fixed;top:18px;left:20px;color:#cfcfcf;font-size:12.5px;text-decoration:none}
-  .back-site:hover{color:#fff}
+
+  @media(max-width:900px){
+    .auth-split{grid-template-columns:1fr}
+    .auth-brand{display:none}
+    .auth-mobile-logo{display:flex}
+  }
   @media(max-width:480px){.auth-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<a class="back-site" href="login.html">← <span data-en="Back to login" data-bm="Kembali ke log masuk">Back to login</span></a>
-<div class="auth-wrap">
-  <div class="auth-card">
-    <div class="auth-logo"><span class="mk">Q</span><div><b>Qaseh Katering</b><small>Operations System · 2026</small></div></div>
-    <h1 data-en="Request access" data-bm="Mohon akses">Request access</h1>
-    <div class="sub" data-en="Submit your details. The owner will review and approve your account." data-bm="Hantar butiran anda. Pemilik akan semak dan luluskan akaun.">Submit your details. The owner will review and approve your account.</div>
-
-    <div class="auth-msg" id="msg"></div>
-
-    <form id="reg-form">
-      <div class="auth-field">
-        <label for="name" data-en="Full name" data-bm="Nama penuh">Full name</label>
-        <input id="name" required placeholder="cth. Aliff Aziz">
-      </div>
-      <div class="auth-row">
-        <div class="auth-field">
-          <label for="email" data-en="Email" data-bm="Emel">Email</label>
-          <input id="email" type="email" required placeholder="cth. nama@qaseh.com">
-        </div>
-        <div class="auth-field">
-          <label for="phone" data-en="Phone" data-bm="Telefon">Phone</label>
-          <input id="phone" placeholder="cth. 012-345 6789">
-        </div>
-      </div>
-      <div class="auth-field">
-        <label for="role" data-en="Requested role" data-bm="Peranan dipohon">Requested role</label>
-        <select id="role"></select>
-      </div>
-      <div class="auth-row">
-        <div class="auth-field">
-          <label for="password" data-en="Password" data-bm="Kata laluan">Password</label>
-          <div class="pw-wrap">
-            <input id="password" type="password" required placeholder="••••••••" minlength="6">
-            <button type="button" class="pw-toggle" data-toggle="password" aria-label="Show password"></button>
-          </div>
-        </div>
-        <div class="auth-field">
-          <label for="confirm" data-en="Confirm password" data-bm="Sahkan kata laluan">Confirm password</label>
-          <div class="pw-wrap">
-            <input id="confirm" type="password" required placeholder="••••••••" minlength="6">
-            <button type="button" class="pw-toggle" data-toggle="confirm" aria-label="Show password"></button>
-          </div>
-        </div>
-      </div>
-      <div class="pw-hint" data-en="Password must be at least 6 characters." data-bm="Kata laluan mesti sekurang-kurangnya 6 aksara.">Password must be at least 6 characters.</div>
-      <label class="terms"><input type="checkbox" id="agree"> <span data-en="I confirm my details are correct and agree to the company's system usage terms." data-bm="Saya sahkan butiran ini betul dan bersetuju dengan terma penggunaan sistem syarikat.">I confirm my details are correct and agree to the company's system usage terms.</span></label>
-      <button type="submit" class="btn btn-primary btn-block" data-en="Submit request" data-bm="Hantar permohonan">Submit request</button>
-    </form>
-
-    <div class="auth-foot">
-      <span data-en="Already approved?" data-bm="Sudah diluluskan?">Already approved?</span>
-      <a href="login.html" data-en="Log in" data-bm="Log masuk">Log in</a>
+<div class="auth-split">
+  <aside class="auth-brand">
+    <a class="brand-back" href="login.html">← <span data-en="Back to login" data-bm="Kembali ke log masuk">Back to login</span></a>
+    <div class="brand-logo"><span class="mk">Q</span><div><b>Qaseh Katering</b><small>Operations System · 2026</small></div></div>
+    <div class="brand-mid">
+      <h1 data-en="Join the team. Access is approved by the owner." data-bm="Sertai pasukan. Akses diluluskan oleh pemilik.">Join the team. Access is approved by the owner.</h1>
+      <ul class="brand-feats">
+        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span data-en="Submit your details securely" data-bm="Hantar butiran anda dengan selamat">Submit your details securely</span></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span data-en="Owner reviews & assigns your role" data-bm="Pemilik semak & tetapkan peranan anda">Owner reviews & assigns your role</span></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span data-en="Log in once approved" data-bm="Log masuk setelah diluluskan">Log in once approved</span></li>
+      </ul>
     </div>
+    <div class="brand-foot">© 2026 Qaseh Katering (SSM: 201203023045)<br>Langkap, Teluk Intan, Perak</div>
+  </aside>
 
-    <div class="note" data-en="Access is granted by the owner (boss). You won't be able to log in until your request is approved." data-bm="Akses diberi oleh pemilik (boss). Anda tidak boleh log masuk sehingga permohonan diluluskan.">Access is granted by the owner (boss). You won't be able to log in until your request is approved.</div>
-  </div>
+  <main class="auth-panel">
+    <div class="auth-card">
+      <div class="auth-mobile-logo">
+        <div class="l"><span class="mk">Q</span><div><b>Qaseh Katering</b><small>Operations System · 2026</small></div></div>
+        <a href="login.html" data-en="Log in" data-bm="Log masuk">Log in</a>
+      </div>
+
+      <h1 data-en="Request access" data-bm="Mohon akses">Request access</h1>
+      <div class="sub" data-en="Submit your details. The owner will review and approve your account." data-bm="Hantar butiran anda. Pemilik akan semak dan luluskan akaun.">Submit your details. The owner will review and approve your account.</div>
+
+      <div class="auth-msg" id="msg"></div>
+
+      <form id="reg-form">
+        <div class="auth-field">
+          <label for="name" data-en="Full name" data-bm="Nama penuh">Full name</label>
+          <input id="name" required placeholder="cth. Aliff Aziz">
+        </div>
+        <div class="auth-row">
+          <div class="auth-field">
+            <label for="email" data-en="Email" data-bm="Emel">Email</label>
+            <input id="email" type="email" required placeholder="cth. nama@qaseh.com">
+          </div>
+          <div class="auth-field">
+            <label for="phone" data-en="Phone" data-bm="Telefon">Phone</label>
+            <input id="phone" placeholder="cth. 012-345 6789">
+          </div>
+        </div>
+        <div class="auth-field">
+          <label for="role" data-en="Requested role" data-bm="Peranan dipohon">Requested role</label>
+          <select id="role"></select>
+        </div>
+        <div class="auth-row">
+          <div class="auth-field">
+            <label for="password" data-en="Password" data-bm="Kata laluan">Password</label>
+            <div class="pw-wrap">
+              <input id="password" type="password" required placeholder="••••••••" minlength="6">
+              <button type="button" class="pw-toggle" data-toggle="password" aria-label="Show password"></button>
+            </div>
+          </div>
+          <div class="auth-field">
+            <label for="confirm" data-en="Confirm password" data-bm="Sahkan kata laluan">Confirm password</label>
+            <div class="pw-wrap">
+              <input id="confirm" type="password" required placeholder="••••••••" minlength="6">
+              <button type="button" class="pw-toggle" data-toggle="confirm" aria-label="Show password"></button>
+            </div>
+          </div>
+        </div>
+        <div class="pw-hint" data-en="Password must be at least 6 characters." data-bm="Kata laluan mesti sekurang-kurangnya 6 aksara.">Password must be at least 6 characters.</div>
+        <label class="terms"><input type="checkbox" id="agree"> <span data-en="I confirm my details are correct and agree to the company's system usage terms." data-bm="Saya sahkan butiran ini betul dan bersetuju dengan terma penggunaan sistem syarikat.">I confirm my details are correct and agree to the company's system usage terms.</span></label>
+        <button type="submit" class="btn btn-primary btn-block" data-en="Submit request" data-bm="Hantar permohonan">Submit request</button>
+      </form>
+
+      <div class="auth-foot">
+        <span data-en="Already approved?" data-bm="Sudah diluluskan?">Already approved?</span>
+        <a href="login.html" data-en="Log in" data-bm="Log masuk">Log in</a>
+      </div>
+
+      <div class="note" data-en="Access is granted by the owner (boss). You won't be able to log in until your request is approved." data-bm="Akses diberi oleh pemilik (boss). Anda tidak boleh log masuk sehingga permohonan diluluskan.">Access is granted by the owner (boss). You won't be able to log in until your request is approved.</div>
+    </div>
+  </main>
 </div>
 
 <script src="assets/js/auth.js"></script>
@@ -109,7 +153,6 @@
     try { bm = localStorage.getItem('qaseh_lang') === 'bm'; } catch (e) {}
     if (bm) document.querySelectorAll('[data-bm]').forEach(function (n) { n.textContent = n.getAttribute('data-bm'); });
 
-    // role options
     var sel = document.getElementById('role');
     QAUTH.REQUESTABLE.forEach(function (r) {
       var o = document.createElement('option');
@@ -118,7 +161,6 @@
     });
     sel.value = 'staff';
 
-    // password show/hide
     var eyeOpen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
     var eyeOff = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 7 10 7a13.2 13.2 0 0 1-1.67 2.68M6.6 6.6A13.3 13.3 0 0 0 2 11s3.5 7 10 7a9 9 0 0 0 5.4-1.6M3 3l18 18"/></svg>';
     document.querySelectorAll('.pw-toggle').forEach(function (btn) {
